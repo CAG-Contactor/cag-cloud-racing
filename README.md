@@ -12,3 +12,5 @@ The system has the following main features:
   - Time keeping
   - Completion
 - Leader board
+
+The overall architectur is illistrated [here](https://drive.google.com/file/d/1tkuwic7LL2QKBTZxVNJYqREY1GGFSiT_/view?usp=sharing).
