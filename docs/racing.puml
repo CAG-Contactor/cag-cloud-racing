@@ -1,0 +1,7 @@
+@startuml
+
+SystemState -down-> "queue [0..n]" Race
+SystemState -down-> "leaderBoard [0..n]" Race
+SystemState -down-> "currentActiveRace [0..1]" Race
+
+@enduml

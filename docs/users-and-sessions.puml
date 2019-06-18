@@ -1,0 +1,28 @@
+@startuml
+
+class Session {
+  token: String
+}
+
+class User {
+  id: String
+  password: String
+  type: {CONTESTANT, ADMIN}
+}
+
+class Race {
+  id: Id
+  startTime: TimeStamp
+  splitTime: TimeStamp
+  finishTime: TimeStamp
+  status: {IDLE, ARMED, STARTED,
+  FINISHED, ABORTED}
+}
+
+SystemState o--> "sessions [0..n]" Session
+SystemState "[userName:String]" o-down--> "registeredUsers [1]" User
+
+Session -left-> "user [1]" User
+User o--> "myRaces [0..n]" Race
+
+@enduml
