@@ -4,7 +4,7 @@ The new CAG Racing Manager.
 The overall architecture is illustrated [here](https://drive.google.com/file/d/1tkuwic7LL2QKBTZxVNJYqREY1GGFSiT_/view?usp=sharing).
 
 ### Racing Manager
-This is the backend that handles all [business logic](system-state-transformations.md) in the system. 
+This is the backend that handles all [business logic](business-logic.md) in the system. 
 
 The _Racing manager_ provides interfaces for the clients
 
