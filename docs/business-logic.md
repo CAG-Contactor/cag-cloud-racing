@@ -212,7 +212,7 @@ otherwise
 
 ### Finish gate passage detected
 When the finish gate is passed during an active race, the time is registered and the race is finished and
-is moved from teh current race to the leader board at the proper position.
+is moved from the current race to the leader board at the proper position.
 
 **Signature**
 
