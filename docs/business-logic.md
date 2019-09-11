@@ -216,7 +216,7 @@ is moved from the current race to the leader board at the proper position.
 
 **Signature**
 
-`passSplitGate(previousState: SystemState, timeStamp: TimeStamp) => newState: SystemState`
+`passFinishGate(previousState: SystemState, timeStamp: TimeStamp) => newState: SystemState`
 
 **Post-condition**
 
