@@ -43,7 +43,7 @@ When a user authenticates, a session with a token is created and added to the se
 
 **Signature**
 
-`contestantLogin(previousState: SystemState, name: String, password: String) => newState: SystemState`
+`userLogin(previousState: SystemState, name: String, password: String) => newState: SystemState`
 
 **Post-condition**
 
