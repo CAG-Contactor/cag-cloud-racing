@@ -5,6 +5,20 @@
 ### Racing
 ![Racing model](racing.png)
 
+The system contains a number of `User`:s and a user is qualified by its name.
+
+Each user may have performed any number of `Race`:s (among which one can be the `currentActiveRace` in the system).
+A `Race` always belongs to exactly one `User` (but may also be referenced from the `queue`, `leaderBoard` and 
+`currentActiveRace`).
+
+The system also contains a number of `Session`:s corresponding to logged in `User`:s. 
+It is possible for a `User` to have multiple sessions (e.g, from multiple devices). 
+
+The system has a `queue` of pending races, which have been added when a user signs up to a race (however the `queue` may only contain max one `Race` per `User`). 
+When arming a new race, the head of the `Queue` is removed and is made the `currentActiveRace`.
+
+Once a `Race` has completed successfully it is added to the `leaderboard`
+
 ## Business logic
 The business logic of the system is described as actions and their post-conditions
 
@@ -19,7 +33,9 @@ The business logic of the system is described as actions and their post-conditio
 * [Finish gate passage detected](#finish-gate-passage-detected)
 
 ### Register contestant 
-When a new contestant registers, user is added to the registered users.
+This operation is executed when a contestant registers a new user.
+
+The operation adds a new user to the to the set of registered users.
 
 **Signature**
 
@@ -39,7 +55,9 @@ otherwise
     
 
 ### User login
-When a user authenticates, a session with a token is created and added to the sessions.
+This operation is executed when a user logs in.
+
+The operation authenticates a user and creates a session.
 
 **Signature**
 
@@ -60,64 +78,61 @@ otherwise, if the scrambled `password` does not match the password of the found 
 otherwise
 
 * let `session` be a new `Session` in:
-  - `newState.sessions` contains `session` and all sessions from `previousState.sessions`
+  - length of `newState.sessions` is length of `previousState.sessions` + 1
+  - `newState.sessions` contains `session` 
+  - `newState.sessions` contains all sessions from `previousState.sessions`
     
 ###  Signup for race
-When a contestant signs up for a race, a race is created and is placed into the queue.
+This operation is executed when a user signs up for to participate in a new race.
+
+The operation creates a new race for the specified user and places it in the queue of races.
 
 **Signature**
 
-`signupForRace(previousState: SystemState, token: String) => newState: SystemState`
+`signupForRace(previousState: SystemState, userId: String) => newState: SystemState`
 
 **Post-condition**
 
 [Session has been checked](#session-has-been-checked) 
 
-If no session for the specified `token` is found among `previousState.sessions`
+Let `user` be the user associated with the `userId` and `newRace` be a new `Race` in:
 
-* the system state is unchanged
-* an error indicating that no sessions exists has been emitted
-
-otherwise, if a race for the user associated with the session, already exists in the queue
-
-* the system state is unchanged
-* an error indicating that the user is already present in the queue has been emitted
-
-otherwise
-* let `user` be the user associated with the found session and `newRace` be a new `Race` in:
-    - `newRace` has been created and has been added to `user.myRaces` of the user associated with the session, 
-       i.e. `newState.registeredUsers[user.name]` contains the new race
-    - `newRace.status === IDLE`
-    - `newState.queue` contains all races from `previousState.queue`
-    - `newRace` is at the last position in `newState.queue`
-    - `newState.queue` is sorted according to the order the races where added to the queue    
+* If a race for the `user`, already exists in the queue
+  - the system state is unchanged
+  - an error indicating that the user is already present in the queue has been emitted
+* otherwise
+  - `newRace` has been created and has been added to `user.myRaces` of the `user`, 
+       (i.e. `newState.registeredUsers[user.name]` contains the new race)
+  - `newRace.status === IDLE`
+  - length of `newState.queue` is length of `previousState.queue` + 1
+  - `newState.queue` contains all races from `previousState.queue`
+  - `newRace` is at the last position in `newState.queue`
+  - `newState.queue` is sorted according to the order the races where added to the queue    
 
 ###  Bail out from race
-When a contestant bails out from a previously sign up for a race, the race is removed from the queue and 
-the race status is set to aborted. However, the race is kept among the races of the user.
+This operation is executed when a user cancels the sign-up for a race.
+
+The operation removes the race, for the specified user, from the queue of races.
 
 **Signature**
 
-`bailOutFromRace(previousState: SystemState, token: String) => newState: SystemState`
+`bailOutFromRace(previousState: SystemState, userId: String) => newState: SystemState`
 
 **Post-condition**
 
 [Session has been checked](#session-has-been-checked) 
 
-otherwise, if no race for the user associated with the session, exist in the queue
+Let `user` be the user associated with the `userId` and `race` be the race, found in the queue, for the `user`, in:
 
-* the system state is unchanged
-* an error indicating that the user does not exist in the queue has been emitted
-
-otherwise
-
-* let `race` be the race, found in the queue, for the user associated with the session, in:
-  - `newState.queue` contains and all races from `previousState.queue`, except for `race`
-  - `newState.queue` is sorted according to the order in which races where added    
+* length of `newState.queue` is length of `previousState.queue` - 1
+* `newState.queue` contains and all races from `previousState.queue`, except for `race`
+* `newState.queue` is sorted according to the order in which races where added    
 
 ### Arm race
-When an administrator arm the ace, the race at head of the queue is moved to become the current active race and 
-the status of that race is set to armed.
+This operation is executed when the administrator shall be initiate a new race.
+
+The operation removes the race at head of the queue and set it as the current active race and 
+in addition, the status of that race is set to armed.
 
 **Signature**
 
@@ -141,12 +156,15 @@ otherwise
 
 * `newState.currentRace` is the head of `previousState.queue`
 * `newState.currentRace.status === ARMED`
+* length of `newState.queue` is length of `previousState.queue` - 1
 * `newState.queue` contains all races, except for the race for the head race, from `previousState.queue`
 * `newState.queue` is sorted according to the order in which races where added    
 
 ### Abort active race
-When the current active race is aborted, it is removed, regardless of its status, 
-by unsetting the current active race and setting the status of the removed race to aborted.
+This operation is executed when the current active race is aborted.
+
+The operation clears (note that the race is not removed, though) the current active race, 
+regardless of its status and in addition, the status of the removed race is set to aborted.
 
 **Signature**
 

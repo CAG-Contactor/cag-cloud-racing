@@ -23,6 +23,6 @@ SystemState o--> "sessions [0..n]" Session
 SystemState "[userName:String]" o-down--> "registeredUsers [1]" User
 
 Session -left-> "user [1]" User
-User o--> "myRaces [0..n]" Race
+User "1" o--> "myRaces [0..n]" Race
 
 @enduml
