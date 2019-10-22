@@ -15,13 +15,14 @@ Parameters:
     Default: dev
     Description: The Lambda Function Stage
 
+
 Resources:
 
   RestApi:
     Type: AWS::Serverless::Api
     Properties:
       Name:
-        Fn::Sub: start-gate-passage-detected-${StageName}
+        Fn::Sub: cloud-racing-client-api-${StageName}
       StageName:
         Ref: StageName
 
@@ -30,7 +31,7 @@ Resources:
     Properties:
       FunctionName:
         Fn::Sub: start-gate-passage-detected-${StageName}
-      CodeUri: target/start-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
+      CodeUri: start-gate-passage-detected-lambda/target/start-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
       Handler: se.caglabs.cloudracing.lambda.startgatepassedlambda.service.StartGatePassedHandler::execute
       Policies:
         DynamoDBReadPolicy:
@@ -44,6 +45,39 @@ Resources:
             Method: POST
             RestApiId:
               Ref: RestApi
+
+
+  RegisterContestantFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: register-contestant-${StageName}
+      CodeUri: register-contestant-lambda/target/register-contestant-lambda-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.registercontestant.service.RegisterContestantHandler::execute
+      Policies:
+        DynamoDBReadPolicy:
+          TableName:
+            Ref: RegisteredUsersTable
+      Events:
+        List:
+          Type: Api
+          Properties:
+            Path: /registered-users
+            Method: POST
+            RestApiId:
+              Ref: RestApi
+
+  RegisteredUsersTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName:
+        Fn::Sub: registered-users-${StageName}
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
 
   CurrentRaceTable:
     Type: AWS::Serverless::SimpleTable
