@@ -17,6 +17,7 @@ public class RegisterContestantHandler {
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
         User user;
+        System.out.println("Stage: " + System.getenv("Stage"));
         try {
             user = mapper.readValue(body, User.class);
             this.getUserDao().saveUser(user);
