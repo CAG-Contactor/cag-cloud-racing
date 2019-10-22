@@ -6,6 +6,6 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 
 public class StartGatePassedHandler {
     public APIGatewayProxyResponseEvent execute(APIGatewayProxyRequestEvent request, Context context) {
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Hello");
+        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Hello  all");
     }
 }
