@@ -1,4 +1,4 @@
-package se.caglabs.cloudracing.lambda.registercontestant.service;
+package se.caglabs.cloudracing.lambda.registercontestantlambda.service;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
