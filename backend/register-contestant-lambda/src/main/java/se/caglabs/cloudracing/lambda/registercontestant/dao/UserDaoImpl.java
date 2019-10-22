@@ -3,7 +3,9 @@ package se.caglabs.cloudracing.lambda.registercontestant.dao;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import se.caglabs.cloudracing.common.persistence.stuff.StageNameTableNameResolver;
 import se.caglabs.cloudracing.lambda.registercontestant.model.User;
 
 import java.util.List;
@@ -15,7 +17,8 @@ public class UserDaoImpl implements UserDao {
 
     public UserDaoImpl() {
         this.client = AmazonDynamoDBClientBuilder.standard().build();
-        this.mapper = new DynamoDBMapper(this.client);
+        this.mapper = new DynamoDBMapper(this.client, DynamoDBMapperConfig.builder()
+                .withTableNameResolver(new StageNameTableNameResolver()).build());
     }
 
     public List<User> listUsers() {

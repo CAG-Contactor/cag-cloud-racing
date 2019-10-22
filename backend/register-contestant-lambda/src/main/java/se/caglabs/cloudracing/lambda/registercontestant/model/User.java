@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import lombok.Data;
 
 
-@DynamoDBTable(tableName="registered-users-dev")
+@DynamoDBTable(tableName="registered-users-STAGE")
 @Data
 public class User {
     @DynamoDBHashKey(attributeName="id")
