@@ -18,11 +18,19 @@ Parameters:
 
 Resources:
 
-  RestApi:
+  ClientRestApi:
     Type: AWS::Serverless::Api
     Properties:
       Name:
         Fn::Sub: cloud-racing-client-api-${StageName}
+      StageName:
+        Ref: StageName
+
+  RaspberryRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name:
+        Fn::Sub: cloud-racing-raspberry-api-${StageName}
       StageName:
         Ref: StageName
 
@@ -44,7 +52,7 @@ Resources:
             Path: /start-gate-passed
             Method: POST
             RestApiId:
-              Ref: RestApi
+              Ref: RaspberryRestApi
 
 
   RegisterContestantFunction:
@@ -65,7 +73,7 @@ Resources:
             Path: /registered-users
             Method: POST
             RestApiId:
-              Ref: RestApi
+              Ref: ClientRestApi
 
   RegisteredUsersTable:
     Type: AWS::Serverless::SimpleTable
