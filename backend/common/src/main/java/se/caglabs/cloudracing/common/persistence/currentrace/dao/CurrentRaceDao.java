@@ -1,6 +1,6 @@
-package se.caglabs.cloudracing.common.persistence.dao;
+package se.caglabs.cloudracing.common.persistence.currentrace.dao;
 
-import se.caglabs.cloudracing.common.persistence.model.CurrentRace;
+import se.caglabs.cloudracing.common.persistence.currentrace.model.CurrentRace;
 
 public interface CurrentRaceDao {
 

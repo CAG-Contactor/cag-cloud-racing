@@ -1,9 +1,9 @@
-package se.caglabs.cloudracing.common.persistence.dao;
+package se.caglabs.cloudracing.common.persistence.currentrace.dao;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import se.caglabs.cloudracing.common.persistence.model.CurrentRace;
+import se.caglabs.cloudracing.common.persistence.currentrace.model.CurrentRace;
 
 import java.util.UUID;
 

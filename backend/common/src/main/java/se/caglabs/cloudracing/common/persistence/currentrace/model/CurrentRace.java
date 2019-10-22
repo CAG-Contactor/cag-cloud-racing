@@ -1,4 +1,4 @@
-package se.caglabs.cloudracing.common.persistence.model;
+package se.caglabs.cloudracing.common.persistence.currentrace.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
