@@ -3,35 +3,49 @@ package se.caglabs.cloudracing.common.persistence.currentrace.dao;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import se.caglabs.cloudracing.common.persistence.currentrace.model.CurrentRace;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class CurrentRaceDaoImpl implements CurrentRaceDao {
 
-	private AmazonDynamoDB client;
-	private DynamoDBMapper mapper;
+    private DynamoDBMapper mapper;
 
-	public CurrentRaceDaoImpl() {
-		this.client = AmazonDynamoDBClientBuilder.standard().build();
-		this.mapper = new DynamoDBMapper(this.client);
-	}
+    public CurrentRaceDaoImpl() {
+		AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
+        this.mapper = new DynamoDBMapper(client);
+    }
 
-	public CurrentRace getCurrentRace(String id) {
-		return this.mapper.load(CurrentRace.class, id);
-	}
+    public Optional<CurrentRace> getCurrentRace() {
+        PaginatedScanList<CurrentRace> races = this.mapper.scan(CurrentRace.class, new DynamoDBScanExpression());
+        if (races.size() == 1) {
+            return Optional.of(races.get(0));
+        } else if (races.size() == 0) {
+            return Optional.empty();
+        } else {
+            throw new CurrentRaceDaoException("There are more than 1 current races", null);
+        }
+    }
 
-	public void saveCurrentRace(CurrentRace currentRace) {
-		if(currentRace.getId() == null) {
-			currentRace.setId(UUID.randomUUID().toString());
-		}
-		this.mapper.save(currentRace);
-	}
+    public void saveCurrentRace(CurrentRace currentRace) {
+        PaginatedScanList<CurrentRace> races = this.mapper.scan(CurrentRace.class, new DynamoDBScanExpression());
+        if (races.size() > 0) {
+            throw new CurrentRaceDaoException("Tried to create a new current race when there already exist one", null);
+        }
 
-	public void deleteCurrentRace(String id) {
-		CurrentRace currentRace = this.getCurrentRace(id);
-		if(currentRace != null) {
-			this.mapper.delete(currentRace);
-		}
-	}
+        if (currentRace.getId() == null) {
+            currentRace.setId(UUID.randomUUID().toString());
+        }
+
+        this.mapper.save(currentRace);
+    }
+
+    public void deleteCurrentRace() {
+        this.getCurrentRace().ifPresent(currentRace -> {
+            this.mapper.delete(currentRace);
+        });
+    }
 }

@@ -14,4 +14,12 @@
     <artifactId>start-gate-passage-detected-lambda</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <version>${project.version}</version>
+            <artifactId>common</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

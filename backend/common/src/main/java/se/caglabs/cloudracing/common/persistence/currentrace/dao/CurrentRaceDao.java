@@ -2,12 +2,19 @@ package se.caglabs.cloudracing.common.persistence.currentrace.dao;
 
 import se.caglabs.cloudracing.common.persistence.currentrace.model.CurrentRace;
 
+import java.util.Optional;
+
 public interface CurrentRaceDao {
+    public static class CurrentRaceDaoException extends Error {
+		public CurrentRaceDaoException(String message, Throwable cause) {
+			super(message, cause);
+		}
+	}
 
-	CurrentRace getCurrentRace(String id);
+    Optional<CurrentRace> getCurrentRace();
 
-	void saveCurrentRace(CurrentRace currentRace);
+    void saveCurrentRace(CurrentRace currentRace) throws CurrentRaceDaoException;
 
-	void deleteCurrentRace(String id);
+    void deleteCurrentRace();
 
 }
