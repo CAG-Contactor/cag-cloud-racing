@@ -1,0 +1,58 @@
+enum RaceStatus {
+    IDLE
+    ARMED
+    STARTED
+    FINISHED
+    ABORTED
+}
+
+type Race {
+    id: ID!
+    startTime: Int
+    splitTime: Int
+    finsihTime: Int
+    status: RaceStatus
+}
+
+enum UserType {
+    CONTESTANT
+    ADMIN
+}
+
+type User {
+    id: String!
+    type: UserType!
+    myRaces: [Race!]!
+}
+
+type Session {
+    token: String!
+    user: User!
+}
+
+type SystemState {
+    registeredUsers: [User!]!
+    sessions: [Session!]
+    queue: [Race!]!
+    leaderBoard: [Race!]!
+    currentActiveRace: Race
+}
+
+type SystemOperations {
+    registerUser(id: String!, password: String!): User!
+    userLogin(userName: String!, password: String!): Session!
+    signupForRace(userId: String!): Boolean
+    bailOutFromRace(userId: String!): Boolean
+
+    armRace: Boolean
+    abortActiveRace: Boolean
+
+    passStartGate(timestamp: Int): Boolean
+    passSplitGate(timestamp: Int): Boolean
+    passFinishGate(timestamp: Int): Boolean
+}
+
+schema {
+    query: SystemState
+    mutation: SystemOperations
+}
