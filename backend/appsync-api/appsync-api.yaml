@@ -1,0 +1,21 @@
+AppSyncApi:
+  Type: "AWS::AppSync::GraphQLApi"
+  Description: "The GraphQL API for the CAG Racing Manager"
+  Properties:
+    AuthenticationType: API_KEY
+    Name: !Sub racing-manager-gql-api-${StageName}
+
+AppSyncSchema:
+  Type: "AWS::AppSync::GraphQLSchema"
+  Properties:
+    ApiId: !GetAtt AppSyncApi.ApiId
+    DefinitionS3Location: ../../cag-racing-manager-api.graphql
+
+AppSyncRegisteredUsersDataSource:
+  Type: AWS::AppSync::DataSource
+  Properties:
+    ApiId: !GetAtt AppSyncApi.ApiId
+    Description: "AppSync data source for the registered-users table"
+    DynamoDBConfig: !Ref RegisteredUsersTable
+    Name: !Sub registered-users-data-source-${StageName}
+    Type: AMAZON_DYNAMODB

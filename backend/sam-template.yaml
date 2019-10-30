@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  Implementation of the logic for handling passage of the start gate.
+  The CAG Racing Manager
 
 Globals:
   Function:
@@ -13,11 +13,74 @@ Parameters:
   StageName:
     Type: String
     Default: dev
-    Description: The Lambda Function Stage
-
+    Description: The stage for the stack (identifies all resources)
 
 Resources:
+  # AppSync section
+  AppSyncRegisteredUsersTableRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub appsync-registered-users-table-role-${StageName}
+      ManagedPolicyArns:
+        - Ref: AppSyncRegisteredUsersTablePolicy
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - sts:AssumeRole
+            Principal:
+              Service:
+                - appsync.amazonaws.com
+    DependsOn:
+      - AppSyncRegisteredUsersTablePolicy
 
+  AppSyncRegisteredUsersTablePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Managed policy to allow AWS AppSync to access the registered-users table created by this template.
+      Path: /appsync/
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+              - dynamodb:UpdateItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+            Resource: !Join [ "", [ !GetAtt RegisteredUsersTable.Arn, "*" ] ]
+
+  AppSyncApi:
+    Type: AWS::AppSync::GraphQLApi
+    Description: The GraphQL API for the CAG Racing Manager
+    Properties:
+      AuthenticationType: API_KEY
+      Name: !Sub racing-manager-gql-api-${StageName}
+
+  AppSyncSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      DefinitionS3Location: ../cag-racing-manager-api.graphql
+
+  AppSyncRegisteredUsersDataSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      Description: AppSync data source for the registered-users table
+      DynamoDBConfig:
+        TableName: !Ref RegisteredUsersTable
+        AwsRegion: !Sub ${AWS::Region}
+      Name: !Sub registered_users_table_${StageName}
+      ServiceRoleArn: !GetAtt AppSyncRegisteredUsersTableRole.Arn
+      Type: AMAZON_DYNAMODB
+
+  # API Gateways
   ClientRestApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -34,6 +97,7 @@ Resources:
       StageName:
         Ref: StageName
 
+  # Lambdas
   StartGatePassageDetectedFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -78,6 +142,7 @@ Resources:
             RestApiId:
               Ref: ClientRestApi
 
+  # DynamoDB
   RegisteredUsersTable:
     Type: AWS::Serverless::SimpleTable
     Properties:

@@ -1,4 +1,6 @@
 # System state transformations
+The API of this model is declared in the [GraphQL schema file](../cag-racing-manager-api.graphql).
+
 ## Domain model 
 ### Users and sessions
 ![Users and sessions model](users_and_sessions.png)
