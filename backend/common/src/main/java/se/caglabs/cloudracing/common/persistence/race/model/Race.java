@@ -21,7 +21,7 @@ public class Race {
     @DynamoDBAttribute(attributeName="userId")
     private String userId;
     @DynamoDBAttribute(attributeName="status")
-    private CurrentRace.Status status;
+    private Status status;
     @DynamoDBAttribute(attributeName="startTime")
     private Number startTime;
     @DynamoDBAttribute(attributeName="splitTime")

@@ -144,6 +144,25 @@ Resources:
             RestApiId:
               Ref: RaspberryRestApi
 
+  FinishGatePassageDetectedFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: finish-gate-passage-detected-${StageName}
+      CodeUri: finish-gate-passage-detected-lambda/target/finish-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.finishgatepassedlambda.service.FinishGatePassedHandler::execute
+      Policies:
+        DynamoDBReadPolicy:
+          TableName:
+            Ref: CurrentRaceTable
+      Events:
+        List:
+          Type: Api
+          Properties:
+            Path: /finish-gate-passed
+            Method: POST
+            RestApiId:
+              Ref: RaspberryRestApi
 
   RegisterContestantFunction:
     Type: AWS::Serverless::Function
