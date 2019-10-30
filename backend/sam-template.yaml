@@ -17,6 +17,13 @@ Parameters:
 
 Resources:
   # AppSync section
+  AppSyncApiKey:
+    Type: AWS::AppSync::ApiKey
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      # Expires at 2020-03-01
+      Expires: 1583020800
+
   AppSyncRegisteredUsersTableRole:
     Type: AWS::IAM::Role
     Properties:
@@ -76,9 +83,28 @@ Resources:
       DynamoDBConfig:
         TableName: !Ref RegisteredUsersTable
         AwsRegion: !Sub ${AWS::Region}
-      Name: !Sub registered_users_table_${StageName}
+      Name: !Sub registered_users_table_data_source_${StageName}
       ServiceRoleArn: !GetAtt AppSyncRegisteredUsersTableRole.Arn
       Type: AMAZON_DYNAMODB
+
+  AppSyncRegisteredUsersResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt AppSyncApi.ApiId
+      TypeName: SystemState
+      FieldName: registeredUsers
+      DataSourceName: !GetAtt AppSyncRegisteredUsersDataSource.Name
+      RequestMappingTemplate: |
+        {
+            "version" : "2017-02-28",
+            "operation" : "Scan",
+            ## Add 'limit' and 'nextToken' arguments to this field in your schema to implement pagination. **
+            ## "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
+            ## "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
+        }
+      ResponseMappingTemplate: |
+        $util.toJson($ctx.result.items)
+
 
   # API Gateways
   ClientRestApi:
