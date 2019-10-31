@@ -209,6 +209,29 @@ Resources:
             RestApiId:
               Ref: ClientRestApi
 
+  BailOutFromRaceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: bail-out-from-race-${StageName}
+      CodeUri: bail-out-from-race-lambda/target/bail-out-from-race-lambda-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.bailoutfromrace.service.BailOutFromRaceHandler::bailOutFromRace
+      Environment:
+        Variables:
+          Stage: !Ref StageName
+#      Policies:
+#        DynamoDBCrudPolicy:
+#          TableName:
+#            Ref: RegisteredUsersTable
+#      Events:
+#        List:
+#          Type: Api
+#          Properties:
+#            Path: /registered-users
+#            Method: POST
+#            RestApiId:
+#              Ref: ClientRestApi
+
   # DynamoDB
   RegisteredUsersTable:
     Type: AWS::Serverless::SimpleTable
