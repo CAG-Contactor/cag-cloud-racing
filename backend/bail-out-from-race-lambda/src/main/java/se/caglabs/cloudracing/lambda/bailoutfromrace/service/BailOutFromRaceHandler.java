@@ -6,6 +6,6 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 
 public class BailOutFromRaceHandler {
     public APIGatewayProxyResponseEvent bailOutFromRace(APIGatewayProxyRequestEvent request, Context context) {
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Hello  all");
+        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Hi chicken!");
     }
 }
