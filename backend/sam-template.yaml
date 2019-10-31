@@ -219,18 +219,18 @@ Resources:
       Environment:
         Variables:
           Stage: !Ref StageName
-#      Policies:
-#        DynamoDBCrudPolicy:
-#          TableName:
-#            Ref: RegisteredUsersTable
-#      Events:
-#        List:
-#          Type: Api
-#          Properties:
-#            Path: /registered-users
-#            Method: POST
-#            RestApiId:
-#              Ref: ClientRestApi
+      Policies:
+        DynamoDBCrudPolicy:
+          TableName:
+            Ref: RacesTable
+      Events:
+        List:
+          Type: Api
+          Properties:
+            Path: /race-queue
+            Method: DELETE
+            RestApiId:
+              Ref: ClientRestApi
 
   # DynamoDB
   RegisteredUsersTable:
