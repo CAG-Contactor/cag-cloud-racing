@@ -13,20 +13,8 @@ The _Racing manager_ provides interfaces for the clients
 - Interface towards UI for contestant
 - Interface towards UI for leader board and ongoing race
 
+#### AWS Implementation
 The proposed implementation using AWS is illustrated [here](https://drive.google.com/file/d/1enmsnM97tp0FsPzq2BGzctTi64KrAt9m/view?usp=sharing).
-
-### AWS DynamoDB Tables
-The following AWS DynamoDB tables are used
-
-| Name | Columns | Comment |
-|:---|:---|:---|
-| registered-users | id, password, type| |
-| races | id, createdTime, startTime, splitTime, finishTime, status, userId| All races in the system. The _userId_ is mandatory and refers to the owning user in the _registered-users_ table. |
-| sessions | token, userId | All races in the system. The _userId_ is mandatory and refers to the owning user in the _registered-users_ table. |
-| race-queue | raceId | The queue of pending races in the system. The _raceId_ refers to the race in the _races_ table. |
-| current-race | raceId | The current active race in the system. The table either contains one or zero items. The _raceId_ refers to the race in the _races_ table. |
-
-The leader board need no specific table. It is just the set of races sorted by the diff between _finishTime_ and _startTime_.
 
 ### UI for administrator
 This UI provides the following features
