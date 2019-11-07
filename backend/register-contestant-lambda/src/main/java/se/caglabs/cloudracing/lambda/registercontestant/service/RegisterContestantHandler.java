@@ -28,7 +28,7 @@ public class RegisterContestantHandler {
         } catch (JsonProcessingException | UserDaoException e) {
             log.warn("Error creating new contestant!", e);
 
-            return new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("Error creating new contestant!");
+            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Error creating new contestant!");
         }
     }
 
