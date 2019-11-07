@@ -4,17 +4,15 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDao;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDaoImpl;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.exception.UserDaoException;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.model.User;
 
-
+@Slf4j
 public class RegisterContestantHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisterContestantHandler.class);
     private UserDao dao;
 
     public APIGatewayProxyResponseEvent createContestant(APIGatewayProxyRequestEvent request) {
@@ -23,14 +21,14 @@ public class RegisterContestantHandler {
         ObjectMapper mapper = new ObjectMapper();
         try {
             User user = mapper.readValue(body, User.class);
-            LOGGER.info("Creating new contestant: {}", user.getName());
+            log.info("Creating new contestant: {}", user.getName());
             getUserDao().saveUser(user);
 
             return new APIGatewayProxyResponseEvent().withStatusCode(201);
         } catch (JsonProcessingException | UserDaoException e) {
-            LOGGER.warn("Error creating new contestant!", e);
+            log.warn("Error creating new contestant!", e);
 
-            return new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("Error creating new contestant!");
+            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Error creating new contestant!");
         }
     }
 

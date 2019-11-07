@@ -274,7 +274,7 @@ Resources:
       TableName:
         Fn::Sub: registered-users-${StageName}
       PrimaryKey:
-        Name: id
+        Name: name
         Type: String
       ProvisionedThroughput:
         ReadCapacityUnits: 1
