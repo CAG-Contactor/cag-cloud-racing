@@ -15,6 +15,10 @@
 		<module>common</module>
 		<module>register-contestant-lambda</module>
 		<module>start-gate-passage-detected-lambda</module>
+		<module>split-gate-passage-detected-lambda</module>
+        <module>finish-gate-passage-detected-lambda</module>
+		<module>bail-out-from-race-lambda</module>
+		<module>user-login-lambda</module>
 	</modules>
 
 	<dependencies>
@@ -39,6 +43,12 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.10.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.10</version>
 		</dependency>
 
 		<dependency>

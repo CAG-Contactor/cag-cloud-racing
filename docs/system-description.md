@@ -13,6 +13,7 @@ The _Racing manager_ provides interfaces for the clients
 - Interface towards UI for contestant
 - Interface towards UI for leader board and ongoing race
 
+#### AWS Implementation
 The proposed implementation using AWS is illustrated [here](https://drive.google.com/file/d/1enmsnM97tp0FsPzq2BGzctTi64KrAt9m/view?usp=sharing).
 
 ### UI for administrator

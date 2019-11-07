@@ -12,6 +12,7 @@ class User {
 
 class Race {
   id: Id
+  createdTime: TimeStamp
   startTime: TimeStamp
   splitTime: TimeStamp
   finishTime: TimeStamp
