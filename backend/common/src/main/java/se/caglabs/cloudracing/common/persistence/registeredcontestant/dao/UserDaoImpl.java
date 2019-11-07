@@ -5,12 +5,14 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import lombok.extern.slf4j.Slf4j;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.exception.UserDaoException;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.model.User;
 import se.caglabs.cloudracing.common.persistence.stuff.StageNameTableNameResolver;
 
 import java.util.List;
 
+@Slf4j
 public class UserDaoImpl implements UserDao {
 
     private DynamoDBMapper mapper;
@@ -38,9 +40,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     private boolean userExists(User newUser) {
-        List<User> allUsers = mapper.scan(User.class, new DynamoDBScanExpression());
+        User user = mapper.load(User.class, newUser.getName());
+        log.info("User: {} ", user);
 
-        return allUsers.stream()
-                .anyMatch(registeredUser -> registeredUser.getName().equals(newUser.getName()));
+        return user != null;
     }
 }
