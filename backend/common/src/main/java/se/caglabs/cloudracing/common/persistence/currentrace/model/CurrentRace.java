@@ -6,7 +6,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 import java.sql.Timestamp;
 
-@DynamoDBTable(tableName="current-race")
+@DynamoDBTable(tableName="current-race-STAGE")
 public class CurrentRace {
 
     private String id;
