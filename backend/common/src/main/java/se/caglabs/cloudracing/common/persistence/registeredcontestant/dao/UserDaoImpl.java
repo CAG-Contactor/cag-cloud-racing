@@ -25,7 +25,7 @@ public class UserDaoImpl implements UserDao {
 
     public void saveUser(User newUser) throws UserDaoException {
         if(userExists(newUser)) {
-            throw new UserDaoException("User already exists" + newUser.getName());
+            throw new UserDaoException("User with name [" + newUser.getName() + "] already exists!");
         } else {
             this.mapper.save(newUser);
         }
@@ -41,7 +41,6 @@ public class UserDaoImpl implements UserDao {
 
     private boolean userExists(User newUser) {
         User user = mapper.load(User.class, newUser.getName());
-        log.info("User: {} ", user);
 
         return user != null;
     }
