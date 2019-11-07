@@ -26,9 +26,9 @@ The following AWS DynamoDB tables are used
 
 | Name | Columns | Comment |
 |:---|:---|:---|
-| registered-users | id, password, type| |
-| races | id, createdTime, startTime, splitTime, finishTime, status, userId| All races in the system. The _userId_ is mandatory and refers to the owning user in the _registered-users_ table. |
-| sessions | token, userId | All races in the system. The _userId_ is mandatory and refers to the owning user in the _registered-users_ table. |
+| registered-users | name, password, type| |
+| races | id, createdTime, startTime, splitTime, finishTime, status, userName| All races in the system. The _userId_ is mandatory and refers to the owning user in the _registered-users_ table. |
+| sessions | token, userName | All races in the system. The _userId_ is mandatory and refers to the owning user in the _registered-users_ table. |
 | race-queue | raceId | The queue of pending races in the system. The _raceId_ refers to the race in the _races_ table. |
 | current-race | raceId | The current active race in the system. The table either contains one or zero items. The _raceId_ refers to the race in the _races_ table. |
 | leaderboard | raceId | The list of races that have completed successfully. The _raceId_ refers to the race in the _races_ table. |
