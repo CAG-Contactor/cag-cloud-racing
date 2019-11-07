@@ -6,10 +6,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.caglabs.cloudracing.lambda.registercontestant.dao.UserDao;
-import se.caglabs.cloudracing.lambda.registercontestant.dao.UserDaoImpl;
-import se.caglabs.cloudracing.lambda.registercontestant.exception.UserDaoException;
-import se.caglabs.cloudracing.lambda.registercontestant.model.User;
+import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDao;
+import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDaoImpl;
+import se.caglabs.cloudracing.common.persistence.registeredcontestant.exception.UserDaoException;
+import se.caglabs.cloudracing.common.persistence.registeredcontestant.model.User;
+
 
 public class RegisterContestantHandler {
 

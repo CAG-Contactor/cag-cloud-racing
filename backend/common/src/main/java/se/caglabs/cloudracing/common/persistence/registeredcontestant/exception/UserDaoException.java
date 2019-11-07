@@ -1,4 +1,4 @@
-package se.caglabs.cloudracing.lambda.registercontestant.exception;
+package se.caglabs.cloudracing.common.persistence.registeredcontestant.exception;
 
 public class UserDaoException extends Exception {
 

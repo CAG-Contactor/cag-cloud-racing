@@ -1,20 +1,17 @@
-package se.caglabs.cloudracing.lambda.registercontestant.dao;
+package se.caglabs.cloudracing.common.persistence.registeredcontestant.dao;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import se.caglabs.cloudracing.common.persistence.registeredcontestant.exception.UserDaoException;
+import se.caglabs.cloudracing.common.persistence.registeredcontestant.model.User;
 import se.caglabs.cloudracing.common.persistence.stuff.StageNameTableNameResolver;
-import se.caglabs.cloudracing.lambda.registercontestant.exception.UserDaoException;
-import se.caglabs.cloudracing.lambda.registercontestant.model.User;
 
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDaoImpl.class);
 
     private DynamoDBMapper mapper;
 
