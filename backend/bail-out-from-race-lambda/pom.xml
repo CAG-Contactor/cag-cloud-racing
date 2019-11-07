@@ -20,6 +20,7 @@
             <version>${project.version}</version>
             <artifactId>common</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>
