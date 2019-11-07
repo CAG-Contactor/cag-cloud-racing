@@ -24,11 +24,11 @@ public class RegisterContestantHandler {
             log.info("Creating new contestant: {}", user.getName());
             getUserDao().saveUser(user);
 
-            return new APIGatewayProxyResponseEvent().withStatusCode(201);
-        } catch (JsonProcessingException | UserDaoException e) {
-            log.warn("Error creating new contestant!", e);
-
-            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Error creating new contestant!");
+            return new APIGatewayProxyResponseEvent().withStatusCode(201).withBody("Created new user!");
+        } catch (JsonProcessingException  e) {
+            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad input values!");
+        } catch (UserDaoException e) {
+            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Contestant already exists!");
         }
     }
 
