@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface SessionDao {
     Session findSessionByToken(String token);
-    List<Session> findSessionsForUser(String userId);
+    List<Session> findSessionsForUser(String userName);
     void saveSession(Session session);
 }

@@ -16,7 +16,7 @@ public class Session {
     @DynamoDBAttribute(attributeName = "token")
     @NonNull
     private String token;
-    @DynamoDBAttribute(attributeName = "userId")
+    @DynamoDBAttribute(attributeName = "userName")
     @NonNull
-    private String userId;
+    private String userName;
 }

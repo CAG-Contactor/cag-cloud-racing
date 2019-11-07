@@ -25,7 +25,7 @@ public class UserLoginHandler {
             // Check user password
             if (true) {
                 // Create and return session
-                Session session = Session.of(UUID.randomUUID().toString(), "userId");
+                Session session = Session.of(UUID.randomUUID().toString(), "userName");
                 return new APIGatewayProxyResponseEvent()
                         .withBody(mapper.writeValueAsString(session))
                         .withStatusCode(201);
