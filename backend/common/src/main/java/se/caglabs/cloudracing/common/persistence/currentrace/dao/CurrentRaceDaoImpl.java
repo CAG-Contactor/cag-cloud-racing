@@ -39,8 +39,8 @@ public class CurrentRaceDaoImpl implements CurrentRaceDao {
             throw new CurrentRaceDaoException("Tried to create a new current race when there already exist one", null);
         }
 
-        if (currentRace.getId() == null) {
-            currentRace.setId(UUID.randomUUID().toString());
+        if (currentRace.getRaceId() == null) {
+            currentRace.setRaceId(UUID.randomUUID().toString());
         }
 
         this.mapper.save(currentRace);
