@@ -132,6 +132,9 @@ Resources:
         Fn::Sub: start-gate-passage-detected-${StageName}
       CodeUri: start-gate-passage-detected-lambda/target/start-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
       Handler: se.caglabs.cloudracing.lambda.startgatepassedlambda.service.StartGatePassedHandler::execute
+      Environment:
+        Variables:
+          Stage: !Ref StageName
       Policies:
         DynamoDBReadPolicy:
           TableName:
@@ -152,6 +155,9 @@ Resources:
         Fn::Sub: split-gate-passage-detected-${StageName}
       CodeUri: split-gate-passage-detected-lambda/target/split-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
       Handler: se.caglabs.cloudracing.lambda.splitgatepassedlambda.service.SplitGatePassedHandler::execute
+      Environment:
+        Variables:
+          Stage: !Ref StageName
       Policies:
         DynamoDBReadPolicy:
           TableName:
@@ -172,6 +178,9 @@ Resources:
         Fn::Sub: finish-gate-passage-detected-${StageName}
       CodeUri: finish-gate-passage-detected-lambda/target/finish-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
       Handler: se.caglabs.cloudracing.lambda.finishgatepassedlambda.service.FinishGatePassedHandler::execute
+      Environment:
+        Variables:
+          Stage: !Ref StageName
       Policies:
         DynamoDBReadPolicy:
           TableName:

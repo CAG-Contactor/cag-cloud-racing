@@ -3,9 +3,11 @@ package se.caglabs.cloudracing.common.persistence.currentrace.dao;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import se.caglabs.cloudracing.common.persistence.currentrace.model.CurrentRace;
+import se.caglabs.cloudracing.common.persistence.stuff.StageNameTableNameResolver;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -16,7 +18,8 @@ public class CurrentRaceDaoImpl implements CurrentRaceDao {
 
     public CurrentRaceDaoImpl() {
 		AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
-        this.mapper = new DynamoDBMapper(client);
+        this.mapper = new DynamoDBMapper(client, DynamoDBMapperConfig.builder()
+                .withTableNameResolver(new StageNameTableNameResolver()).build());
     }
 
     public Optional<CurrentRace> getCurrentRace() {
