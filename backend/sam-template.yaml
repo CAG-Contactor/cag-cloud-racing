@@ -267,6 +267,32 @@ Resources:
             RestApiId:
               Ref: ClientRestApi
 
+  AbortActiveRaceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: abort-active-race-${StageName}
+      CodeUri: abort-active-race-lambda/target/abort-active-race-lambda-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.abortactiverace.service.AbortActiveRaceHandler::abortActiveRace
+      Environment:
+        Variables:
+          Stage: !Ref StageName
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: CurrentRaceTable
+      Events:
+        List:
+          Type: Api
+          Properties:
+            Path: /abort-active-race
+            Method: DELETE
+            RestApiId:
+              Ref: ClientRestApi
+
   # DynamoDB
   RegisteredUsersTable:
     Type: AWS::Serverless::SimpleTable
@@ -286,7 +312,7 @@ Resources:
       TableName:
         Fn::Sub: current-race-${StageName}
       PrimaryKey:
-        Name: id
+        Name: raceId
         Type: String
       ProvisionedThroughput:
         ReadCapacityUnits: 1

@@ -10,7 +10,6 @@ import se.caglabs.cloudracing.common.persistence.race.dao.RaceDao;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDaoImpl;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
 
-import java.sql.Timestamp;
 import java.util.Optional;
 
 public class FinishGatePassedHandler {
@@ -24,7 +23,7 @@ public class FinishGatePassedHandler {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("timestamp required");
         }
         try {
-            Integer timestamp = Integer.parseInt(timeString);
+            Long timestamp = Long.parseLong(timeString);
             Optional<CurrentRace> currentRaceOpt = getCurrentRaceDao().getCurrentRace();
             if (! currentRaceOpt.isPresent()) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("no race is ongoing");

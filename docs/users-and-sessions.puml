@@ -5,7 +5,7 @@ class Session {
 }
 
 class User {
-  id: String
+  name: String
   password: String
   type: {CONTESTANT, ADMIN}
 }
