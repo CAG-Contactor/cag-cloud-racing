@@ -255,7 +255,7 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName:
               Ref: RegisteredUsersTable
-        - DynamoDBReadPolicy:
+        - DynamoDBCrudPolicy:
             TableName:
               Ref: SessionsTable
       Events:
@@ -336,7 +336,7 @@ Resources:
       TableName:
         Fn::Sub: sessions-${StageName}
       PrimaryKey:
-        Name: id
+        Name: token
         Type: String
       ProvisionedThroughput:
         ReadCapacityUnits: 1
