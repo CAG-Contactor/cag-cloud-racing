@@ -39,6 +39,10 @@ public class UserDaoImpl implements UserDao {
         return this.mapper.scan(User.class, new DynamoDBScanExpression());
     }
 
+    public boolean userExist(String name) {
+        return listUsers().stream().anyMatch(user -> user.getName().equals(name));
+    }
+
     private boolean userExists(User newUser) {
         User user = mapper.load(User.class, newUser.getName());
 

@@ -9,4 +9,5 @@ public interface UserDao {
     User getUser(String name);
     void saveUser(User user) throws UserDaoException;
     List<User> listUsers();
+    boolean userExist(String name);
 }

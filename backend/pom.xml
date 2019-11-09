@@ -20,6 +20,7 @@
 		<module>bail-out-from-race-lambda</module>
 		<module>abort-active-race-lambda</module>
 		<module>user-login-lambda</module>
+		<module>signup-for-race-lambda</module>
 	</modules>
 
 	<dependencies>
