@@ -15,38 +15,64 @@ import java.util.Optional;
 
 public class StartGatePassedHandler {
 
+    private static final String INPUT_PARAM = "timestamp";
+    private static final String PREFIX_SUCCESS = "Success: ";
+    private static final String PREFIX_EXCEPTION = "Exception: ";
+    private static final String PREFIX_VALIDATION = "Validation error: ";
+    private static final String MESSAGE_SUCCESS = "Race started successfully.";
+    private static final String MESSAGE_TIMESTAMP_MISSING = "QueryString parameter timestamp is required.";
+    private static final String MESSAGE_NO_CURRENT_RACE = "No race is ongoing.";
+    private static final String MESSAGE_RACE_NOT_FOUND = "Could not find ongoing race.";
+    private static final String MESSAGE_RACE_NOT_ARMED = "Race could not be started due to invalid status.";
+
     private CurrentRaceDao currentRaceDao;
     private RaceDao raceDao;
 
     public APIGatewayProxyResponseEvent execute(APIGatewayProxyRequestEvent request, Context context) {
 
-        String timestampParam = request.getQueryStringParameters().get("timestamp");
+        String timestampParam = request.getQueryStringParameters().get(INPUT_PARAM);
         if (timestampParam == null) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("timestamp required");
+            return validationError(MESSAGE_TIMESTAMP_MISSING);
         }
         try {
             Long timestamp = Long.parseLong(timestampParam);
             Optional<CurrentRace> currentRaceOpt = getCurrentRaceDao().getCurrentRace();
             if (!currentRaceOpt.isPresent()) {
-                return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("no race is ongoing");
+                return validationError(MESSAGE_NO_CURRENT_RACE);
             }
             CurrentRace currentRace = currentRaceOpt.get();
             Optional<Race> raceOpt = raceDao.findById(currentRace.getRaceId());
             if (!raceOpt.isPresent()) {
-                return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("could not find ongoing race");
+                return validationError(MESSAGE_RACE_NOT_FOUND);
             }
             Race race = raceOpt.get();
             if (race.getStatus().equals(Race.Status.ARMED)) {
                 race.setStartTime(timestamp);
                 race.setStatus(Race.Status.STARTED);
-                return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("race is started");
+                return success();
             } else {
-                return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("race could not be started");
+                return validationError(MESSAGE_RACE_NOT_ARMED);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new APIGatewayProxyResponseEvent().withStatusCode(500);
+            return serverError(e);
         }
+    }
+
+    private APIGatewayProxyResponseEvent success() {
+        return response(200, PREFIX_SUCCESS + MESSAGE_SUCCESS);
+    }
+
+    private APIGatewayProxyResponseEvent validationError(String message) {
+        return response(400, PREFIX_VALIDATION + message);
+    }
+
+    private APIGatewayProxyResponseEvent serverError(Exception e) {
+        return response(500, PREFIX_EXCEPTION + e.getMessage());
+    }
+
+    private APIGatewayProxyResponseEvent response(int statusCode, String message) {
+        return new APIGatewayProxyResponseEvent().withStatusCode(statusCode).withBody(message);
     }
 
     private CurrentRaceDao getCurrentRaceDao() {
