@@ -2,10 +2,7 @@ package se.caglabs.cloudracing.common.persistence.race.dao;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.stuff.StageNameTableNameResolver;
 
@@ -36,8 +33,15 @@ public class RaceDaoImpl implements RaceDao {
                 .withHashKeyValues(key);
         PaginatedQueryList<Race> query = this.mapper.query(Race.class, queryExpression);
         if (query.size() > 1) {
-            throw new RaceQueueDaoException("more than one race with id " + id);
+            throw new RaceDaoException("more than one race with id " + id);
         }
         return query.stream().findFirst();
+    }
+
+    @Override
+    public boolean raceExist(String userName) {
+        PaginatedScanList<Race> races = this.mapper.scan(Race.class, new DynamoDBScanExpression());
+
+        return races.stream().anyMatch(race -> race.getUserName().equals(userName) && race.getStatus() == Race.Status.IDLE);
     }
 }

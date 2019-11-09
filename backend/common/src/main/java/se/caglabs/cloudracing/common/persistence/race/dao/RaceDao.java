@@ -5,12 +5,12 @@ import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import java.util.Optional;
 
 public interface RaceDao {
-    class RaceQueueDaoException extends Error {
-        public RaceQueueDaoException(String message, Throwable cause) {
+    class RaceDaoException extends Error {
+        public RaceDaoException(String message, Throwable cause) {
             super(message, cause);
         }
 
-        public RaceQueueDaoException(String message) {
+        RaceDaoException(String message) {
             super(message);
         }
     }
@@ -18,4 +18,7 @@ public interface RaceDao {
     Optional<Race> findById(String id);
 
     void saveRace(Race race);
+
+    boolean raceExist(String userId);
+
 }
