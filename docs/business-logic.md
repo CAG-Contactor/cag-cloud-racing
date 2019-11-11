@@ -241,7 +241,7 @@ otherwise, if `previousState.currentRace.status !== STARTED OR previousState.cur
 
 otherwise
 
-* `newState.currentRace.startTime === timeStamp`
+* `newState.currentRace.splitTime === timeStamp`
 
 ### Finish gate passage detected
 When the finish gate is passed during an active race, the time is registered and the race is finished and

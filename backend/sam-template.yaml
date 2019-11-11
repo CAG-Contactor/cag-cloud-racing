@@ -147,7 +147,7 @@ Resources:
           Type: Api
           Properties:
             Path: /start-gate-passed
-            Method: GET
+            Method: POST
             RestApiId:
               Ref: RaspberryRestApi
 
@@ -162,9 +162,12 @@ Resources:
         Variables:
           Stage: !Ref StageName
       Policies:
-        DynamoDBReadPolicy:
-          TableName:
-            Ref: CurrentRaceTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: CurrentRaceTable
       Events:
         List:
           Type: Api
