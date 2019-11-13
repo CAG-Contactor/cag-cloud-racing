@@ -49,7 +49,7 @@ public class SignUpForRaceHandler {
     }
 
     private void saveRace(Race race) {
-        race.setStatus(Race.Status.IDLE);
+        race.setRaceStatus(Race.RaceStatus.IDLE);
         race.setCreateTime(System.currentTimeMillis());
         this.getRaceDao().saveRace(race);
 

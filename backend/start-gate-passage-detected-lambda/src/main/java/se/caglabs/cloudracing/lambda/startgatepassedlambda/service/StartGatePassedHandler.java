@@ -46,9 +46,9 @@ public class StartGatePassedHandler {
                 return validationError(MESSAGE_RACE_NOT_FOUND);
             }
             Race race = raceOpt.get();
-            if (race.getStatus().equals(Race.Status.ARMED)) {
+            if (race.getRaceStatus().equals(Race.RaceStatus.ARMED)) {
                 race.setStartTime(timestamp);
-                race.setStatus(Race.Status.STARTED);
+                race.setRaceStatus(Race.RaceStatus.STARTED);
                 raceDao.saveRace(race);
                 return success();
             } else {

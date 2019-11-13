@@ -7,7 +7,7 @@ import lombok.Data;
 @DynamoDBTable(tableName="races-STAGE")
 @Data
 public class Race {
-    public enum Status {
+    public enum RaceStatus {
         IDLE, ARMED, STARTED, FINISHED, ABORTED
     }
 
@@ -16,9 +16,9 @@ public class Race {
     private String id;
     @DynamoDBAttribute(attributeName="userName")
     private String userName;
-    @DynamoDBAttribute(attributeName="status")
+    @DynamoDBAttribute(attributeName="raceStatus")
     @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.S)
-    private Status status;
+    private RaceStatus raceStatus;
     @DynamoDBAttribute(attributeName="startTime")
     private Long startTime;
     @DynamoDBAttribute(attributeName="splitTime")

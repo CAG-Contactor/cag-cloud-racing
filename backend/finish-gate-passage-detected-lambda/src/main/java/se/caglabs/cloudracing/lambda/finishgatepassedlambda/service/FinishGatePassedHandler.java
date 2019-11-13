@@ -34,14 +34,14 @@ public class FinishGatePassedHandler {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("could not find ongoing race");
             }
             Race race = raceOpt.get();
-            if (! race.getStatus().equals(Race.Status.STARTED)) {
+            if (! race.getRaceStatus().equals(Race.RaceStatus.STARTED)) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("race is not started");
             }
             if (race.getStartTime() == null || race.getSplitTime() == null) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("start and/or middle gate not passed");
             }
             race.setFinishTime(timestamp);
-            race.setStatus(Race.Status.FINISHED);
+            race.setRaceStatus(Race.RaceStatus.FINISHED);
             raceDao.saveRace(race);
             currentRaceDao.deleteCurrentRace();
             return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("OK");

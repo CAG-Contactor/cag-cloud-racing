@@ -44,7 +44,7 @@ public class SplitGatePassedHandler {
                 return validationError(MESSAGE_RACE_NOT_FOUND);
             }
             Race race = raceOpt.get();
-            if (race.getStatus().equals(Race.Status.STARTED) &&
+            if (race.getRaceStatus().equals(Race.RaceStatus.STARTED) &&
                     (race.getSplitTime() == null || race.getSplitTime() == 0)) {
                 race.setSplitTime(timestamp);
                 raceDao.saveRace(race);
