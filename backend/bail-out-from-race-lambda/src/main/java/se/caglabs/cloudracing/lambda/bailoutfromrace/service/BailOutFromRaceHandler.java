@@ -6,24 +6,24 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import se.caglabs.cloudracing.common.restpayload.UserIdPayload;
+import se.caglabs.cloudracing.common.restpayload.UserNamePayload;
 
 @Slf4j
 public class BailOutFromRaceHandler {
 
     public APIGatewayProxyResponseEvent bailOutFromRace(APIGatewayProxyRequestEvent request, Context context) {
 
-        UserIdPayload userId = null;
+        UserNamePayload userNamePayload = null;
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            userId = mapper.readValue(body, UserIdPayload.class);
-            log.info("User bailing out, id: " + userId.getUserId());
-
-            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Hi " + userId.getUserId() + " are you man or mice?");
+            userNamePayload = mapper.readValue(body, UserNamePayload.class);
+            log.info("User bailing out, name: " + userNamePayload.getUserName());
+            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Hi " + userNamePayload.getUserName() + " are you man or mice?");
         } catch (JsonProcessingException  e) {
-            log.warn("Error bailing out user: " + userId.getUserId(), e);
-            return new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("Error bailing out user: " + userId.getUserId());
+            e.printStackTrace();
+            log.warn("Error bailing out user, name: " + userNamePayload.getUserName(), e);
+            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("userName required to bail out of race!");
         }
     }
 }
