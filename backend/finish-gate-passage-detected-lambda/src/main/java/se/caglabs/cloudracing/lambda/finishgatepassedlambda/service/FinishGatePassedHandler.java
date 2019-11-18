@@ -18,6 +18,7 @@ public class FinishGatePassedHandler {
     private RaceDao raceDao;
 
     public APIGatewayProxyResponseEvent execute(APIGatewayProxyRequestEvent request, Context context) {
+
         String timeString = request.getQueryStringParameters().get("timestamp");
         if (timeString == null) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("timestamp required");
@@ -29,7 +30,7 @@ public class FinishGatePassedHandler {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("no race is ongoing");
             }
             CurrentRace currentRace = currentRaceOpt.get();
-            Optional<Race> raceOpt = raceDao.findById(currentRace.getRaceId());
+            Optional<Race> raceOpt = getRaceDao().findById(currentRace.getRaceId());
             if (! raceOpt.isPresent()) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("could not find ongoing race");
             }
