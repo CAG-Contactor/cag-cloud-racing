@@ -235,9 +235,12 @@ Resources:
         Variables:
           Stage: !Ref StageName
       Policies:
-        DynamoDBCrudPolicy:
-          TableName:
-            Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RaceQueueTable
       Events:
         List:
           Type: Api
