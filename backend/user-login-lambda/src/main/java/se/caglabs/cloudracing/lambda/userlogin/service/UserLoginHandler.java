@@ -19,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 public class UserLoginHandler {
 
-    public APIGatewayProxyResponseEvent userLogin(APIGatewayProxyRequestEvent request, Context context) {
+    public APIGatewayProxyResponseEvent userLogin(APIGatewayProxyRequestEvent request) {
         UserDao userDao = new UserDaoImpl();
         SessionDao sessionDao = new SessionDaoImpl();
 
