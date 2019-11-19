@@ -10,5 +10,7 @@ public interface RaceQueueDao {
         }
     }
 
+    void removeFromQueue(String id);
+
     void saveRaceInQueue(RaceQueue raceQueue);
 }

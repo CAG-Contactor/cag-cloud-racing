@@ -11,6 +11,7 @@ import se.caglabs.cloudracing.common.persistence.race.dao.RaceDaoImpl;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDao;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDaoImpl;
+import se.caglabs.cloudracing.common.persistence.racequeue.model.RaceQueue;
 import se.caglabs.cloudracing.common.restpayload.UserNamePayload;
 
 import java.util.Optional;
@@ -22,21 +23,19 @@ public class BailOutFromRaceHandler {
     private static int idNo = 1;
 
     public APIGatewayProxyResponseEvent bailOutFromRace(APIGatewayProxyRequestEvent request, Context context) {
-
         UserNamePayload userNamePayload = null;
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
         try {
             userNamePayload = mapper.readValue(body, UserNamePayload.class);
             log.info("User bailing out, name: " + userNamePayload.getUserName());
-            //return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Hi " + userNamePayload.getUserName() + " are you man or mice?");
         } catch (JsonProcessingException  e) {
             e.printStackTrace();
-            log.warn("Error bailing out user, name: " + userNamePayload.getUserName(), e);
+            log.warn("Error bailing out user, no userName", e);
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("userName required to bail out of race!");
         }
 
-        mockupRace(userNamePayload.getUserName());
+        // mockupRace(userNamePayload.getUserName());
 
         Optional<Race> raceToBailOut = this.getRaceDao().findByUserName(userNamePayload.getUserName());
         if (raceToBailOut.isPresent()) {
@@ -45,6 +44,7 @@ public class BailOutFromRaceHandler {
             race.setRaceStatus(Race.RaceStatus.ABORTED);
             getRaceDao().saveRace(race);
             // remove from race-queue
+            getRaceQueueDao().removeFromQueue(race.getId());
             return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("User bailed out OK: " +
                     userNamePayload.getUserName());
         } else {
@@ -64,6 +64,10 @@ public class BailOutFromRaceHandler {
         race.setSplitTime(System.currentTimeMillis());
         race.setFinishTime(System.currentTimeMillis());
         this.getRaceDao().saveRace(race);
+
+        RaceQueue raceQueue = new RaceQueue();
+        raceQueue.setRaceId(race.getId());
+        this.getRaceQueueDao().saveRaceInQueue(raceQueue);
     }
 
     private RaceDao getRaceDao() {
