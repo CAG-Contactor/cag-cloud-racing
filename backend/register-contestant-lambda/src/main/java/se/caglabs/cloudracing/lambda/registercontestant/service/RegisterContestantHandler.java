@@ -11,6 +11,9 @@ import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDa
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.exception.UserDaoException;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.model.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 public class RegisterContestantHandler {
 
@@ -41,6 +44,17 @@ public class RegisterContestantHandler {
         }
     }
 
+    public User getRegisteredUserWithId(String name) {
+         return getUserDao().getUser(name);
+    }
+
+    public List getRegisteredUsers() {
+         return getUserDao().listUsers();
+    }
+
+    public List getRegisteredUsersWithIdInRace() {
+        return new ArrayList();
+    }
 
     private UserDao getUserDao() {
         if(this.dao == null) {
