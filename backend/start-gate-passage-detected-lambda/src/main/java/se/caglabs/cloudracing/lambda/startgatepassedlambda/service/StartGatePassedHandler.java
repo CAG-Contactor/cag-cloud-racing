@@ -41,14 +41,15 @@ public class StartGatePassedHandler {
                 return validationError(MESSAGE_NO_CURRENT_RACE);
             }
             CurrentRace currentRace = currentRaceOpt.get();
-            Optional<Race> raceOpt = raceDao.findById(currentRace.getRaceId());
+            Optional<Race> raceOpt = getRaceDao().findById(currentRace.getRaceId());
             if (!raceOpt.isPresent()) {
                 return validationError(MESSAGE_RACE_NOT_FOUND);
             }
             Race race = raceOpt.get();
-            if (race.getStatus().equals(Race.Status.ARMED)) {
+            if (race.getRaceStatus().equals(Race.RaceStatus.ARMED)) {
                 race.setStartTime(timestamp);
-                race.setStatus(Race.Status.STARTED);
+                race.setRaceStatus(Race.RaceStatus.STARTED);
+                raceDao.saveRace(race);
                 return success();
             } else {
                 return validationError(MESSAGE_RACE_NOT_ARMED);

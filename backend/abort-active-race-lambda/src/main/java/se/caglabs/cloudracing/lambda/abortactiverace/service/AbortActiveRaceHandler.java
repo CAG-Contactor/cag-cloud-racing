@@ -29,7 +29,7 @@ public class AbortActiveRaceHandler {
                 r.setFinishTime(null);
                 r.setSplitTime(null);
                 r.setStartTime(null);
-                r.setStatus(Race.Status.ABORTED);
+                r.setRaceStatus(Race.RaceStatus.ABORTED);
                 raceDao.saveRace(r);
                 currentRaceDao.deleteCurrentRace();
                 return new APIGatewayProxyResponseEvent().withStatusCode(201).withBody("OK");

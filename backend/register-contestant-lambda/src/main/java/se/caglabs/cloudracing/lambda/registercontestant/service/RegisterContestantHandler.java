@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import se.caglabs.cloudracing.common.persistence.digest.PasswordDigest;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDao;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDaoImpl;
 import se.caglabs.cloudracing.common.persistence.registeredcontestant.exception.UserDaoException;
@@ -15,12 +16,20 @@ public class RegisterContestantHandler {
 
     private UserDao dao;
 
+    /**
+     * For testing purpose.
+     */
+     RegisterContestantHandler(UserDao userDao) {
+         this.dao = userDao;
+     }
+
     public APIGatewayProxyResponseEvent createContestant(APIGatewayProxyRequestEvent request) {
 
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
         try {
             User user = mapper.readValue(body, User.class);
+            user.setPassword(PasswordDigest.digest(user.getPassword()));
             log.info("Creating new contestant: {}", user.getName());
             getUserDao().saveUser(user);
 
@@ -31,6 +40,7 @@ public class RegisterContestantHandler {
             return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Contestant already exists!");
         }
     }
+
 
     private UserDao getUserDao() {
         if(this.dao == null) {

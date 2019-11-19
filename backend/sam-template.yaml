@@ -16,7 +16,8 @@ Parameters:
     Description: The stage for the stack (identifies all resources)
 
 Resources:
-  # AppSync section
+# DO NOT USE THIS FOR NOW, SINCE IT SURPASSES THE GRAPHQLAPI LIMIT.
+#  AppSync section
 #  AppSyncApiKey:
 #    Type: AWS::AppSync::ApiKey
 #    Properties:
@@ -104,7 +105,7 @@ Resources:
 #        }
 #      ResponseMappingTemplate: |
 #        $util.toJson($ctx.result.items)
-#
+
 
   # API Gateways
   ClientRestApi:
@@ -136,15 +137,18 @@ Resources:
         Variables:
           Stage: !Ref StageName
       Policies:
-        DynamoDBReadPolicy:
-          TableName:
-            Ref: CurrentRaceTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: CurrentRaceTable
       Events:
         List:
           Type: Api
           Properties:
             Path: /start-gate-passed
-            Method: GET
+            Method: POST
             RestApiId:
               Ref: RaspberryRestApi
 
@@ -159,9 +163,12 @@ Resources:
         Variables:
           Stage: !Ref StageName
       Policies:
-        DynamoDBReadPolicy:
-          TableName:
-            Ref: CurrentRaceTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: CurrentRaceTable
       Events:
         List:
           Type: Api
@@ -182,9 +189,12 @@ Resources:
         Variables:
           Stage: !Ref StageName
       Policies:
-        DynamoDBReadPolicy:
-          TableName:
-            Ref: CurrentRaceTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: CurrentRaceTable
       Events:
         List:
           Type: Api
@@ -229,9 +239,12 @@ Resources:
         Variables:
           Stage: !Ref StageName
       Policies:
-        DynamoDBCrudPolicy:
-          TableName:
-            Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RaceQueueTable
       Events:
         List:
           Type: Api
@@ -317,7 +330,7 @@ Resources:
         List:
           Type: Api
           Properties:
-            Path: /abort-active-race
+            Path: /current-race
             Method: DELETE
             RestApiId:
               Ref: ClientRestApi

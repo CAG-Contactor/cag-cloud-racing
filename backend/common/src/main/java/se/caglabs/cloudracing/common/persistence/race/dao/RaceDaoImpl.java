@@ -3,11 +3,14 @@ package se.caglabs.cloudracing.common.persistence.race.dao;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.stuff.StageNameTableNameResolver;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
 
 public class RaceDaoImpl implements RaceDao {
 
@@ -36,5 +39,31 @@ public class RaceDaoImpl implements RaceDao {
             throw new RaceDaoException("more than one race with id " + id);
         }
         return query.stream().findFirst();
+    }
+
+    @Override
+    public Optional<Race> findByUserName(String userName) {
+
+        Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+        eav.put(":name", new AttributeValue().withS(userName));
+        eav.put(":status", new AttributeValue().withS(Race.RaceStatus.IDLE.toString()));
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withFilterExpression("userName = :name and raceStatus = :status").withExpressionAttributeValues(eav);
+
+        List<Race> scanResult = mapper.scan(Race.class, scanExpression);
+
+        Optional<Race> raceOptional = Optional.empty();
+        if(scanResult.size() > 0) {
+            raceOptional = Optional.ofNullable(scanResult.get(0));
+        }
+        return raceOptional;
+    }
+
+    @Override
+    public boolean raceExist(String userName) {
+        PaginatedScanList<Race> races = this.mapper.scan(Race.class, new DynamoDBScanExpression());
+
+        return races.stream().anyMatch(race -> race.getUserName().equals(userName) && race.getRaceStatus() == Race.RaceStatus.IDLE);
     }
 }

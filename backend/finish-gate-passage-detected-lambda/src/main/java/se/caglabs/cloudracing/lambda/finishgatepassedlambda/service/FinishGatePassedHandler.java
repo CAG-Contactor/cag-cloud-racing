@@ -18,6 +18,7 @@ public class FinishGatePassedHandler {
     private RaceDao raceDao;
 
     public APIGatewayProxyResponseEvent execute(APIGatewayProxyRequestEvent request, Context context) {
+
         String timeString = request.getQueryStringParameters().get("timestamp");
         if (timeString == null) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("timestamp required");
@@ -29,21 +30,21 @@ public class FinishGatePassedHandler {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("no race is ongoing");
             }
             CurrentRace currentRace = currentRaceOpt.get();
-            Optional<Race> raceOpt = raceDao.findById(currentRace.getRaceId());
+            Optional<Race> raceOpt = getRaceDao().findById(currentRace.getRaceId());
             if (! raceOpt.isPresent()) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("could not find ongoing race");
             }
             Race race = raceOpt.get();
-            if (! race.getStatus().equals(Race.Status.STARTED)) {
+            if (! race.getRaceStatus().equals(Race.RaceStatus.STARTED)) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("race is not started");
             }
-            if (race.getStartTime() == null || race.getSplitTime() == null) {
+            if (isNullOrZero(race.getStartTime()) || isNullOrZero(race.getSplitTime())) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("start and/or middle gate not passed");
             }
             race.setFinishTime(timestamp);
-            race.setStatus(Race.Status.FINISHED);
-            raceDao.saveRace(race);
-            currentRaceDao.deleteCurrentRace();
+            race.setRaceStatus(Race.RaceStatus.FINISHED);
+            getRaceDao().saveRace(race);
+            getCurrentRaceDao().deleteCurrentRace();
             return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("OK");
         } catch (NumberFormatException e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("timestamp should be numeric");
@@ -51,6 +52,9 @@ public class FinishGatePassedHandler {
 
     }
 
+    public boolean isNullOrZero(Long value) {
+        return value == null || value == 0L;
+    }
     private CurrentRaceDao getCurrentRaceDao() {
         if (currentRaceDao == null) {
             currentRaceDao = new CurrentRaceDaoImpl();
