@@ -16,6 +16,13 @@ public class RegisterContestantHandler {
 
     private UserDao dao;
 
+    /**
+     * For testing purpose.
+     */
+     RegisterContestantHandler(UserDao userDao) {
+         this.dao = userDao;
+     }
+
     public APIGatewayProxyResponseEvent createContestant(APIGatewayProxyRequestEvent request) {
 
         String body = request.getBody();
@@ -33,6 +40,7 @@ public class RegisterContestantHandler {
             return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Contestant already exists!");
         }
     }
+
 
     private UserDao getUserDao() {
         if(this.dao == null) {

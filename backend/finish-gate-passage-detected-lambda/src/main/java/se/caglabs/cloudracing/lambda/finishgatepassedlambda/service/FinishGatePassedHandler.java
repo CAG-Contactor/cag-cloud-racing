@@ -38,13 +38,13 @@ public class FinishGatePassedHandler {
             if (! race.getRaceStatus().equals(Race.RaceStatus.STARTED)) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("race is not started");
             }
-            if (race.getStartTime() == null || race.getSplitTime() == null) {
+            if (isNullOrZero(race.getStartTime()) || isNullOrZero(race.getSplitTime())) {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("start and/or middle gate not passed");
             }
             race.setFinishTime(timestamp);
             race.setRaceStatus(Race.RaceStatus.FINISHED);
-            raceDao.saveRace(race);
-            currentRaceDao.deleteCurrentRace();
+            getRaceDao().saveRace(race);
+            getCurrentRaceDao().deleteCurrentRace();
             return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("OK");
         } catch (NumberFormatException e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("timestamp should be numeric");
@@ -52,6 +52,9 @@ public class FinishGatePassedHandler {
 
     }
 
+    public boolean isNullOrZero(Long value) {
+        return value == null || value == 0L;
+    }
     private CurrentRaceDao getCurrentRaceDao() {
         if (currentRaceDao == null) {
             currentRaceDao = new CurrentRaceDaoImpl();
