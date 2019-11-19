@@ -18,7 +18,4 @@ public interface RaceDao {
     Optional<Race> findById(String id);
 
     void saveRace(Race race);
-
-    boolean raceExist(String userId);
-
 }

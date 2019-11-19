@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import se.caglabs.cloudracing.common.dto.UserDTO;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDao;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDaoImpl;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
@@ -24,28 +25,28 @@ public class SignUpForRaceHandler {
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
         System.out.println("Stage: " + System.getenv("Stage"));
-        Race race;
+        UserDTO user;
         try {
-            race = mapper.readValue(body, Race.class);
+            user = mapper.readValue(body, UserDTO.class);
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("User name needed to add a race");
         }
 
-        if (!this.getUserDao().userExist(race.getUserName())) {
+        if (!this.getUserDao().userExist(user.getName())) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("User with name " +
-                    race.getUserName() + " not registered");
+                    user.getName() + " not registered");
         }
 
-        if (this.getRaceDao().raceExist(race.getUserName())) {
+        if (this.getRaceQueueDao().raceExist(user.getName())) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Race already exist for user " +
-                    race.getUserName());
+                    user.getName());
         }
 
-        saveRace(race);
+        saveRace(Race.builder().userName(user.getName()).build());
 
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Race added for user " + race.getUserName());
+        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Race added for user " + user.getName());
     }
 
     private void saveRace(Race race) {
@@ -53,8 +54,11 @@ public class SignUpForRaceHandler {
         race.setCreateTime(System.currentTimeMillis());
         this.getRaceDao().saveRace(race);
 
-        RaceQueue raceQueue = new RaceQueue();
-        raceQueue.setRaceId(race.getId());
+        RaceQueue raceQueue = RaceQueue.builder()
+                .raceId(race.getId())
+                .createTime(race.getCreateTime())
+                .build();
+
         this.getRaceQueueDao().saveRaceInQueue(raceQueue);
     }
 

@@ -1,11 +1,17 @@
 package se.caglabs.cloudracing.common.persistence.race.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @DynamoDBTable(tableName="races-STAGE")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Race {
     public enum Status {
         IDLE, ARMED, STARTED, FINISHED, ABORTED

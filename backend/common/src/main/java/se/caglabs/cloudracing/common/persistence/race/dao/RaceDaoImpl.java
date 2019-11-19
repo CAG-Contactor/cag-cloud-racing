@@ -37,11 +37,4 @@ public class RaceDaoImpl implements RaceDao {
         }
         return query.stream().findFirst();
     }
-
-    @Override
-    public boolean raceExist(String userName) {
-        PaginatedScanList<Race> races = this.mapper.scan(Race.class, new DynamoDBScanExpression());
-
-        return races.stream().anyMatch(race -> race.getUserName().equals(userName) && race.getStatus() == Race.Status.IDLE);
-    }
 }

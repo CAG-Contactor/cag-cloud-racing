@@ -21,6 +21,7 @@
 		<module>abort-active-race-lambda</module>
 		<module>user-login-lambda</module>
 		<module>signup-for-race-lambda</module>
+		<module>arm-race-lambda</module>
 	</modules>
 
 	<dependencies>
