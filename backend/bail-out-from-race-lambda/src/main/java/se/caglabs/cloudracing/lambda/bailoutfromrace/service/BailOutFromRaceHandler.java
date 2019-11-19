@@ -1,18 +1,18 @@
 package se.caglabs.cloudracing.lambda.bailoutfromrace.service;
+
 import com.amazonaws.services.lambda.runtime.Context;
-//import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import se.caglabs.cloudracing.common.dto.UserDTO;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDao;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDaoImpl;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDao;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDaoImpl;
 import se.caglabs.cloudracing.common.persistence.racequeue.model.RaceQueue;
-import se.caglabs.cloudracing.common.restpayload.UserNamePayload;
 
 import java.util.Optional;
 
@@ -23,12 +23,12 @@ public class BailOutFromRaceHandler {
     private static int idNo = 1;
 
     public APIGatewayProxyResponseEvent bailOutFromRace(APIGatewayProxyRequestEvent request, Context context) {
-        UserNamePayload userNamePayload = null;
+        UserDTO userNamePayload = null;
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            userNamePayload = mapper.readValue(body, UserNamePayload.class);
-            log.info("User bailing out, name: " + userNamePayload.getUserName());
+            userNamePayload = mapper.readValue(body, UserDTO.class);
+            log.info("User bailing out, name: " + userNamePayload.getName());
         } catch (JsonProcessingException  e) {
             e.printStackTrace();
             log.warn("Error bailing out user, no userName", e);
@@ -37,7 +37,7 @@ public class BailOutFromRaceHandler {
 
         // mockupRace(userNamePayload.getUserName());
 
-        Optional<Race> raceToBailOut = this.getRaceDao().findByUserName(userNamePayload.getUserName());
+        Optional<Race> raceToBailOut = this.getRaceDao().findByUserName(userNamePayload.getName());
         if (raceToBailOut.isPresent()) {
             // change state IDLE to ABORTED in races
             Race race = raceToBailOut.get();
@@ -46,10 +46,10 @@ public class BailOutFromRaceHandler {
             // remove from race-queue
             getRaceQueueDao().removeFromQueue(race.getId());
             return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("User bailed out OK: " +
-                    userNamePayload.getUserName());
+                    userNamePayload.getName());
         } else {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Race for username: " +
-                    userNamePayload.getUserName() + " not found!");
+                    userNamePayload.getName() + " not found!");
         }
     }
 

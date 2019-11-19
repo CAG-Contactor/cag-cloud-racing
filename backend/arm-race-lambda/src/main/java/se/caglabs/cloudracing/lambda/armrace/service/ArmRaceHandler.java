@@ -48,7 +48,7 @@ public class ArmRaceHandler {
         }
 
         getRaceQueueDao().remove(race);
-        race.setStatus(Race.Status.ARMED);
+        race.setRaceStatus(Race.RaceStatus.ARMED);
         raceDao.saveRace(race);
 
         getCurrentRaceDao().saveCurrentRace(new CurrentRace(nextRace.getRaceId()));

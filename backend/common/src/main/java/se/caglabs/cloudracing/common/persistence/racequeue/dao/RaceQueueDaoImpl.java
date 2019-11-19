@@ -63,7 +63,7 @@ public class RaceQueueDaoImpl implements RaceQueueDao {
                 .withHashKeyValues(key);
         PaginatedQueryList<RaceQueue> query = this.mapper.query(RaceQueue.class, queryExpression);
         if (query.size() > 1) {
-            throw new RaceQueueDaoException("more than one race with id " + id);
+            throw new RaceQueueDaoException("more than one race with id " + id + " in the queue");
         }
         return query.stream().findFirst();
 
@@ -73,6 +73,6 @@ public class RaceQueueDaoImpl implements RaceQueueDao {
     public boolean raceExist(String userName) {
         PaginatedScanList<Race> races = this.mapper.scan(Race.class, new DynamoDBScanExpression());
 
-        return races.stream().anyMatch(race -> race.getUserName().equals(userName) && race.getStatus() == Race.Status.IDLE);
+        return races.stream().anyMatch(race -> race.getUserName().equals(userName) && race.getRaceStatus() == Race.RaceStatus.IDLE);
     }
 }
