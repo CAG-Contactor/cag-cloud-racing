@@ -16,94 +16,95 @@ Parameters:
     Description: The stage for the stack (identifies all resources)
 
 Resources:
-  # AppSync section
-  AppSyncApiKey:
-    Type: AWS::AppSync::ApiKey
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      # Expires at 2020-03-01
-      Expires: 1583020800
-
-  AppSyncRegisteredUsersTableRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Sub appsync-registered-users-table-role-${StageName}
-      ManagedPolicyArns:
-        - Ref: AppSyncRegisteredUsersTablePolicy
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action:
-              - sts:AssumeRole
-            Principal:
-              Service:
-                - appsync.amazonaws.com
-    DependsOn:
-      - AppSyncRegisteredUsersTablePolicy
-
-  AppSyncRegisteredUsersTablePolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      Description: Managed policy to allow AWS AppSync to access the registered-users table created by this template.
-      Path: /appsync/
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action:
-              - dynamodb:GetItem
-              - dynamodb:PutItem
-              - dynamodb:DeleteItem
-              - dynamodb:UpdateItem
-              - dynamodb:Query
-              - dynamodb:Scan
-              - dynamodb:BatchGetItem
-              - dynamodb:BatchWriteItem
-            Resource: !Join [ "", [ !GetAtt RegisteredUsersTable.Arn, "*" ] ]
-
-  AppSyncApi:
-    Type: AWS::AppSync::GraphQLApi
-    Description: The GraphQL API for the CAG Racing Manager
-    Properties:
-      AuthenticationType: API_KEY
-      Name: !Sub racing-manager-gql-api-${StageName}
-
-  AppSyncSchema:
-    Type: AWS::AppSync::GraphQLSchema
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      DefinitionS3Location: ../cag-racing-manager-api.graphql
-
-  AppSyncRegisteredUsersDataSource:
-    Type: AWS::AppSync::DataSource
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      Description: AppSync data source for the registered-users table
-      DynamoDBConfig:
-        TableName: !Ref RegisteredUsersTable
-        AwsRegion: !Sub ${AWS::Region}
-      Name: !Sub registered_users_table_data_source_${StageName}
-      ServiceRoleArn: !GetAtt AppSyncRegisteredUsersTableRole.Arn
-      Type: AMAZON_DYNAMODB
-
-  AppSyncRegisteredUsersResolver:
-    Type: AWS::AppSync::Resolver
-    Properties:
-      ApiId: !GetAtt AppSyncApi.ApiId
-      TypeName: SystemState
-      FieldName: registeredUsers
-      DataSourceName: !GetAtt AppSyncRegisteredUsersDataSource.Name
-      RequestMappingTemplate: |
-        {
-            "version" : "2017-02-28",
-            "operation" : "Scan",
-            ## Add 'limit' and 'nextToken' arguments to this field in your schema to implement pagination. **
-            ## "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
-            ## "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
-        }
-      ResponseMappingTemplate: |
-        $util.toJson($ctx.result.items)
+# DO NOT USE THIS FOR NOW, SINCE IT SURPASSES THE GRAPHQLAPI LIMIT.
+#  AppSync section
+#  AppSyncApiKey:
+#    Type: AWS::AppSync::ApiKey
+#    Properties:
+#      ApiId: !GetAtt AppSyncApi.ApiId
+#      # Expires at 2020-03-01
+#      Expires: 1583020800
+#
+#  AppSyncRegisteredUsersTableRole:
+#    Type: AWS::IAM::Role
+#    Properties:
+#      RoleName: !Sub appsync-registered-users-table-role-${StageName}
+#      ManagedPolicyArns:
+#        - Ref: AppSyncRegisteredUsersTablePolicy
+#      AssumeRolePolicyDocument:
+#        Version: 2012-10-17
+#        Statement:
+#          - Effect: Allow
+#            Action:
+#              - sts:AssumeRole
+#            Principal:
+#              Service:
+#                - appsync.amazonaws.com
+#    DependsOn:
+#      - AppSyncRegisteredUsersTablePolicy
+#
+#  AppSyncRegisteredUsersTablePolicy:
+#    Type: AWS::IAM::ManagedPolicy
+#    Properties:
+#      Description: Managed policy to allow AWS AppSync to access the registered-users table created by this template.
+#      Path: /appsync/
+#      PolicyDocument:
+#        Version: 2012-10-17
+#        Statement:
+#          - Effect: Allow
+#            Action:
+#              - dynamodb:GetItem
+#              - dynamodb:PutItem
+#              - dynamodb:DeleteItem
+#              - dynamodb:UpdateItem
+#              - dynamodb:Query
+#              - dynamodb:Scan
+#              - dynamodb:BatchGetItem
+#              - dynamodb:BatchWriteItem
+#            Resource: !Join [ "", [ !GetAtt RegisteredUsersTable.Arn, "*" ] ]
+#
+#  AppSyncApi:
+#    Type: AWS::AppSync::GraphQLApi
+#    Description: The GraphQL API for the CAG Racing Manager
+#    Properties:
+#      AuthenticationType: API_KEY
+#      Name: !Sub racing-manager-gql-api-${StageName}
+#
+#  AppSyncSchema:
+#    Type: AWS::AppSync::GraphQLSchema
+#    Properties:
+#      ApiId: !GetAtt AppSyncApi.ApiId
+#      DefinitionS3Location: ../cag-racing-manager-api.graphql
+#
+#  AppSyncRegisteredUsersDataSource:
+#    Type: AWS::AppSync::DataSource
+#    Properties:
+#      ApiId: !GetAtt AppSyncApi.ApiId
+#      Description: AppSync data source for the registered-users table
+#      DynamoDBConfig:
+#        TableName: !Ref RegisteredUsersTable
+#        AwsRegion: !Sub ${AWS::Region}
+#      Name: !Sub registered_users_table_data_source_${StageName}
+#      ServiceRoleArn: !GetAtt AppSyncRegisteredUsersTableRole.Arn
+#      Type: AMAZON_DYNAMODB
+#
+#  AppSyncRegisteredUsersResolver:
+#    Type: AWS::AppSync::Resolver
+#    Properties:
+#      ApiId: !GetAtt AppSyncApi.ApiId
+#      TypeName: SystemState
+#      FieldName: registeredUsers
+#      DataSourceName: !GetAtt AppSyncRegisteredUsersDataSource.Name
+#      RequestMappingTemplate: |
+#        {
+#            "version" : "2017-02-28",
+#            "operation" : "Scan",
+#            ## Add 'limit' and 'nextToken' arguments to this field in your schema to implement pagination. **
+#            ## "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
+#            ## "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
+#        }
+#      ResponseMappingTemplate: |
+#        $util.toJson($ctx.result.items)
 
 
   # API Gateways
@@ -300,7 +301,7 @@ Resources:
         List:
           Type: Api
           Properties:
-            Path: /abort-active-race
+            Path: /current-race
             Method: DELETE
             RestApiId:
               Ref: ClientRestApi
