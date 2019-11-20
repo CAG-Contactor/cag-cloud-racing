@@ -23,64 +23,58 @@ public class BailOutFromRaceHandler {
     private static int idNo = 1;
 
     public APIGatewayProxyResponseEvent bailOutFromRace(APIGatewayProxyRequestEvent request, Context context) {
-        UserDTO userNamePayload = null;
+        UserDTO userDTO = null;
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            userNamePayload = mapper.readValue(body, UserDTO.class);
-            log.info("User bailing out, name: " + userNamePayload.getName());
-        } catch (JsonProcessingException  e) {
-            e.printStackTrace();
-            log.warn("Error bailing out user, no userName", e);
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("userName required to bail out of race!");
+            userDTO = mapper.readValue(body, UserDTO.class);
+        } catch (JsonProcessingException | IllegalArgumentException e) {
+            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("name required to bail out of race");
         }
 
-        // mockupRace(userNamePayload.getUserName());
+        //mockupRace(userDTO.getName());
 
-        Optional<Race> raceToBailOut = this.getRaceDao().findByUserName(userNamePayload.getName());
+        Optional<Race> raceToBailOut = getRaceDao().findByUserName(userDTO.getName());
         if (raceToBailOut.isPresent()) {
-            // change state IDLE to ABORTED in races
             Race race = raceToBailOut.get();
             race.setRaceStatus(Race.RaceStatus.ABORTED);
             getRaceDao().saveRace(race);
-            // remove from race-queue
             getRaceQueueDao().removeFromQueue(race.getId());
-            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("User bailed out OK: " +
-                    userNamePayload.getName());
+            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("User bailed out: " +
+                    userDTO.getName());
         } else {
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Race for username: " +
-                    userNamePayload.getName() + " not found!");
+            return new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("Race for user: " +
+                    userDTO.getName() + " with state IDLE not found");
         }
     }
 
+    private RaceDao getRaceDao() {
+        if (raceDao == null) {
+            raceDao = new RaceDaoImpl();
+        }
+        return raceDao;
+    }
 
-    private void mockupRace(String userName) {
+    private RaceQueueDao getRaceQueueDao() {
+        if (raceQueueDao == null) {
+            raceQueueDao = new RaceQueueDaoImpl();
+        }
+        return raceQueueDao;
+    }
+
+    private void mockupRace(String name) {
         Race race = new Race();
         race.setId("id" + Integer.toString(idNo++));
-        race.setUserName(userName);
+        race.setUserName(name);
         race.setRaceStatus(Race.RaceStatus.IDLE);
         race.setCreateTime(System.currentTimeMillis());
         race.setStartTime(System.currentTimeMillis());
         race.setSplitTime(System.currentTimeMillis());
         race.setFinishTime(System.currentTimeMillis());
-        this.getRaceDao().saveRace(race);
+        getRaceDao().saveRace(race);
 
         RaceQueue raceQueue = new RaceQueue();
         raceQueue.setRaceId(race.getId());
-        this.getRaceQueueDao().saveRaceInQueue(raceQueue);
-    }
-
-    private RaceDao getRaceDao() {
-        if (this.raceDao == null) {
-            this.raceDao = new RaceDaoImpl();
-        }
-        return this.raceDao;
-    }
-
-    private RaceQueueDao getRaceQueueDao() {
-        if (this.raceQueueDao == null) {
-            this.raceQueueDao = new RaceQueueDaoImpl();
-        }
-        return this.raceQueueDao;
+        getRaceQueueDao().saveRaceInQueue(raceQueue);
     }
 }
