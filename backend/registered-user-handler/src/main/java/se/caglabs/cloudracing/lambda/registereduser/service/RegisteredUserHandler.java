@@ -1,4 +1,4 @@
-package se.caglabs.cloudracing.lambda.registeruser.service;
+package se.caglabs.cloudracing.lambda.registereduser.service;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
@@ -15,18 +15,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class RegisterUserHandler {
+public class RegisteredUserHandler {
 
     private UserDao dao;
+
+    public RegisteredUserHandler(){}
 
     /**
      * For testing purpose.
      */
-     RegisterUserHandler(UserDao userDao) {
+     RegisteredUserHandler(UserDao userDao) {
          this.dao = userDao;
      }
 
-    public APIGatewayProxyResponseEvent createUser(APIGatewayProxyRequestEvent request) {
+    public APIGatewayProxyResponseEvent registerUser(APIGatewayProxyRequestEvent request) {
 
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
@@ -40,7 +42,7 @@ public class RegisterUserHandler {
         } catch (JsonProcessingException  e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad input values!");
         } catch (UserDaoException e) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Contestant already exists!");
+            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("User already exists!");
         }
     }
 
@@ -55,7 +57,9 @@ public class RegisterUserHandler {
      * Fetches all registered users
      */
     public List getRegisteredUsers() {
-         return getUserDao().listUsers();
+        List users = getUserDao().listUsers();
+
+        return users;
     }
 
     /**
