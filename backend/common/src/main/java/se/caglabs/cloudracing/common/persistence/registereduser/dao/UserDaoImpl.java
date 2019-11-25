@@ -1,4 +1,4 @@
-package se.caglabs.cloudracing.common.persistence.registeredcontestant.dao;
+package se.caglabs.cloudracing.common.persistence.registereduser.dao;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -6,8 +6,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import lombok.extern.slf4j.Slf4j;
-import se.caglabs.cloudracing.common.persistence.registeredcontestant.exception.UserDaoException;
-import se.caglabs.cloudracing.common.persistence.registeredcontestant.model.User;
+import se.caglabs.cloudracing.common.persistence.registereduser.exception.UserDaoException;
+import se.caglabs.cloudracing.common.persistence.registereduser.model.User;
 import se.caglabs.cloudracing.common.persistence.stuff.StageNameTableNameResolver;
 
 import java.util.List;

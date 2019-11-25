@@ -12,8 +12,8 @@ import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDao;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDaoImpl;
 import se.caglabs.cloudracing.common.persistence.racequeue.model.RaceQueue;
-import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDao;
-import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDaoImpl;
+import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
+import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDaoImpl;
 
 
 public class SignUpForRaceHandler {

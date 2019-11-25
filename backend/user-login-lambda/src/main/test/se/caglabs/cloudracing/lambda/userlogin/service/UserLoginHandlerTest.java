@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDao;
+import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
 import se.caglabs.cloudracing.common.persistence.session.dao.SessionDao;
 
 import static org.hamcrest.core.Is.is;

@@ -209,9 +209,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: register-contestant-${StageName}
-      CodeUri: register-contestant-lambda/target/register-contestant-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.registercontestant.service.RegisterContestantHandler::createContestant
+        Fn::Sub: register-user-${StageName}
+      CodeUri: register-user-lambda/target/register-user-lambda-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.registeruser.service.RegisterUserHandler::createUser
       Environment:
         Variables:
           Stage: !Ref StageName

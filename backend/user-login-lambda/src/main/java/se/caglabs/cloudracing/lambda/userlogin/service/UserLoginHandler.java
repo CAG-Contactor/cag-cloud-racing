@@ -1,15 +1,14 @@
 package se.caglabs.cloudracing.lambda.userlogin.service;
 
-import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import se.caglabs.cloudracing.common.persistence.digest.PasswordDigest;
-import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDao;
-import se.caglabs.cloudracing.common.persistence.registeredcontestant.dao.UserDaoImpl;
-import se.caglabs.cloudracing.common.persistence.registeredcontestant.model.User;
+import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
+import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDaoImpl;
+import se.caglabs.cloudracing.common.persistence.registereduser.model.User;
 import se.caglabs.cloudracing.common.persistence.session.dao.SessionDao;
 import se.caglabs.cloudracing.common.persistence.session.dao.SessionDaoImpl;
 import se.caglabs.cloudracing.common.persistence.session.model.Session;

@@ -1,4 +1,4 @@
-package se.caglabs.cloudracing.common.persistence.registeredcontestant.model;
+package se.caglabs.cloudracing.common.persistence.registereduser.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
