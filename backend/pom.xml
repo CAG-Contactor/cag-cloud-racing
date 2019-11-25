@@ -13,7 +13,7 @@
 
 	<modules>
 		<module>common</module>
-		<module>register-contestant-lambda</module>
+		<module>registered-user-handler</module>
 		<module>start-gate-passage-detected-lambda</module>
 		<module>split-gate-passage-detected-lambda</module>
         <module>finish-gate-passage-detected-lambda</module>

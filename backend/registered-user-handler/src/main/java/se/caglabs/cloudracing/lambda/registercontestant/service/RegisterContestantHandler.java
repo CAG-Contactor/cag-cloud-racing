@@ -44,15 +44,24 @@ public class RegisterContestantHandler {
         }
     }
 
-    public User getRegisteredUserWithId(String name) {
+    /**
+     * Fetches a user with a specified name/id
+     */
+    public User getRegisteredUser(String name) {
          return getUserDao().getUser(name);
     }
 
+    /**
+     * Fetches all registered users
+     */
     public List getRegisteredUsers() {
          return getUserDao().listUsers();
     }
 
-    public List getRegisteredUsersWithIdInRace() {
+    /**
+     * Fetches all races that a user that a user has taken part in.
+     */
+    public List getRegisteredUsersInRace() {
         return new ArrayList();
     }
 
