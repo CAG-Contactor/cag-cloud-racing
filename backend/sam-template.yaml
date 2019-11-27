@@ -247,11 +247,18 @@ Resources:
           TableName:
             Ref: RegisteredUsersTable
       Events:
-        PostEvent:
+        RegisterUser:
           Type: Api
           Properties:
             Path: /registered-user
             Method: POST
+            RestApiId:
+              Ref: ClientRestApi
+        DeleteUserByName:
+          Type: Api
+          Properties:
+            Path: /registered-user/{name}
+            Method: DELETE
             RestApiId:
               Ref: ClientRestApi
         GetUserByName:
@@ -269,12 +276,12 @@ Resources:
             RestApiId:
               Ref: ClientRestApi
         #GetUserRace:
-         # Type: Api
-         # Properties:
-         #   Path: /registered-user/{name}/race
-         #   Method: GET
-         #   RestApiId:
-         #   Ref: ClientRestApi
+          # Type: Api
+            # Properties:
+            # Path: /registered-user/{name}/race
+            # Method: GET
+              # RestApiId:
+              # Ref: ClientRestApi
 
   RaceQueueFunction:
     Type: AWS::Serverless::Function

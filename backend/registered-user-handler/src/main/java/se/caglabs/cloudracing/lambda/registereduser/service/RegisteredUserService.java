@@ -11,7 +11,6 @@ import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDaoImpl;
 import se.caglabs.cloudracing.common.persistence.registereduser.exception.UserDaoException;
 import se.caglabs.cloudracing.common.persistence.registereduser.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -50,6 +49,15 @@ public class RegisteredUserService {
     }
 
     /**
+     * Deletes a registered user
+     */
+    APIGatewayProxyResponseEvent deleteRegisteredUser(APIGatewayProxyRequestEvent request) {
+        User user = getUserDao().getUser(request.getPathParameters().get(NAME));
+        getUserDao().deleteUser(user);
+        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("User deleted!");
+    }
+
+    /**
      * Fetches all registered users
      */
      APIGatewayProxyResponseEvent getRegisteredUsers() throws JsonProcessingException {
@@ -58,10 +66,12 @@ public class RegisteredUserService {
     }
 
     /**
-     * Fetches all races that a user that a user has taken part in.
+     * Fetches all races a user user has taken part in.
      */
-    public List getRegisteredUsersInRace() {
-        return new ArrayList();
+    APIGatewayProxyResponseEvent getUserRace(APIGatewayProxyRequestEvent request) throws JsonProcessingException {
+        User user = getUserDao().getUser(request.getPathParameters().get(NAME));
+
+        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(user));
     }
 
     private UserDao getUserDao() {
