@@ -18,6 +18,7 @@
 
 	<modules>
 		<module>backend</module>
+		<module>backend-test</module>
 	</modules>
 
 </project>
