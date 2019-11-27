@@ -30,7 +30,9 @@ public class TestLogin {
     @Test
     public void TestCreateUser() {
 
-        String payload = "{\"name\": \"test15\",\"password\": \"1234\"}";
+        //TODO Fix iether remove the user before test, or fix random user name
+
+        String payload = "{\"name\": \"test20\",\"password\": \"1234\"}";
 
         given().contentType(ContentType.JSON)
                 .body(payload)
@@ -38,7 +40,7 @@ public class TestLogin {
                 .then()
                 .statusCode(201)
                 .extract()
-                .response();
+                .response().body().equals("Created");
     }
 
 
