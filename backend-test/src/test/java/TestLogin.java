@@ -17,7 +17,7 @@ public class TestLogin {
         RestAssured.baseURI = "https://o1xc5igurl.execute-api.eu-central-1.amazonaws.com/Stage";
     }
 
-    @Test
+ /*   @Test
     public void TestLogin() {
         given().urlEncodingEnabled(true)
                 .param("name", "test")
@@ -25,20 +25,21 @@ public class TestLogin {
                 .header("Accept", ContentType.JSON.getAcceptHeader())
                 .post("/login")
                 .then().statusCode(200);
-    }
+    }*/
 
- /*   @Test
+    @Test
     public void TestCreateUser() {
 
+        String payload = "{\"name\": \"test15\",\"password\": \"1234\"}";
+
         given().contentType(ContentType.JSON)
-                .pathParam("id", "AskJsd8Sd")
-                .when()
-                .get("/registered-users")
+                .body(payload)
+                .post("/registered-users")
                 .then()
-                .statusCode(200)
-                .body("name", equalTo("Onur"))
-                .body("password", equalTo("Baskirt"));
-    }*/
+                .statusCode(201)
+                .extract()
+                .response();
+    }
 
 
 }
