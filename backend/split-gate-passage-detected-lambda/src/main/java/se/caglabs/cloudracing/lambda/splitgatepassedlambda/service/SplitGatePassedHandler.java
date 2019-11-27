@@ -13,7 +13,8 @@ import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import java.util.Optional;
 
 public class SplitGatePassedHandler {
-    private static final String INPUT_PARAM = "timestamp";
+    private static final String INPUT_TIMESTAMP = "timestamp";
+    private static final String INPUT_SENSOR_ID = "sensor-id";
     private static final String PREFIX_SUCCESS = "Success: ";
     private static final String PREFIX_EXCEPTION = "Exception: ";
     private static final String PREFIX_VALIDATION = "Validation error: ";
@@ -28,7 +29,8 @@ public class SplitGatePassedHandler {
 
     public APIGatewayProxyResponseEvent execute(APIGatewayProxyRequestEvent request, Context context) {
 
-        String timestampParam = request.getQueryStringParameters().get(INPUT_PARAM);
+        String timestampParam = request.getQueryStringParameters().get(INPUT_TIMESTAMP);
+
         if (timestampParam == null) {
             return validationError(MESSAGE_TIMESTAMP_MISSING);
         }

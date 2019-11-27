@@ -126,6 +126,33 @@ Resources:
 
   # Lambdas
   # RaspberryRestApi
+  GatePassageDetectedFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: gate-passage-detected-${StageName}
+      CodeUri: gate-passage-detected-lambda/target/gate-passage-detected-lambda-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.gatepassedlambda.service.GatePassedHandler::execute
+      Environment:
+        Variables:
+          Stage: !Ref StageName
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: CurrentRaceTable
+      Events:
+        List:
+          Type: Api
+          Properties:
+            Path: /gate-passed
+            Method: POST
+            RestApiId:
+              Ref: RaspberryRestApi
+
+
   StartGatePassageDetectedFunction:
     Type: AWS::Serverless::Function
     Properties:
