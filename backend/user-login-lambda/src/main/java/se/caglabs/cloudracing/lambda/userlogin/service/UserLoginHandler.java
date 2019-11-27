@@ -13,14 +13,24 @@ import se.caglabs.cloudracing.common.persistence.session.dao.SessionDao;
 import se.caglabs.cloudracing.common.persistence.session.dao.SessionDaoImpl;
 import se.caglabs.cloudracing.common.persistence.session.model.Session;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Slf4j
 public class UserLoginHandler {
 
+    private UserDao userDao;
+    private SessionDao sessionDao;
+
+    UserLoginHandler(UserDao userDao, SessionDao sessionDao) {
+        this.userDao = userDao;
+        this.sessionDao = sessionDao;
+    }
+
     public APIGatewayProxyResponseEvent userLogin(APIGatewayProxyRequestEvent request) {
-        UserDao userDao = new UserDaoImpl();
-        SessionDao sessionDao = new SessionDaoImpl();
+        initDaos();
 
         String body = request.getBody();
         ObjectMapper mapper = new ObjectMapper();
@@ -47,5 +57,10 @@ public class UserLoginHandler {
             e.printStackTrace();
             return new APIGatewayProxyResponseEvent().withStatusCode(500);
         }
+    }
+
+    private void initDaos() {
+        userDao = Objects.isNull(userDao) ? new UserDaoImpl() : userDao;
+        sessionDao = Objects.isNull(sessionDao) ? new SessionDaoImpl() : sessionDao;
     }
 }
