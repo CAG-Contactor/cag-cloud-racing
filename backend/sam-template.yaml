@@ -251,13 +251,13 @@ Resources:
             RestApiId:
               Ref: ClientRestApi
 
-  BailOutFromRaceFunction:
+  RaceQueueFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: bail-out-from-race-${StageName}
-      CodeUri: bail-out-from-race-lambda/target/bail-out-from-race-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.bailoutfromrace.service.BailOutFromRaceHandler::bailOutFromRace
+        Fn::Sub: race-queue-${StageName}
+      CodeUri: race-queue-handler/target/race-queue-handler-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.racequeue.service.RaceQueueHandler::route
       Environment:
         Variables:
           Stage: !Ref StageName
@@ -268,12 +268,29 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName:
               Ref: RaceQueueTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RegisteredUsersTable
       Events:
-        List:
+        DeleteEvent:
           Type: Api
           Properties:
             Path: /race-queue
             Method: DELETE
+            RestApiId:
+              Ref: ClientRestApi
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /race-queue
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+        PostEvent:
+          Type: Api
+          Properties:
+            Path: /race-queue
+            Method: POST
             RestApiId:
               Ref: ClientRestApi
 
@@ -355,35 +372,6 @@ Resources:
           Properties:
             Path: /current-race
             Method: DELETE
-            RestApiId:
-              Ref: ClientRestApi
-
-  SignupForRaceFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: signup-for-race-${StageName}
-      CodeUri: signup-for-race-lambda/target/signup-for-race-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.signupforrace.service.SignUpForRaceHandler::signUpForRace
-      Environment:
-        Variables:
-          Stage: !Ref StageName
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RacesTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RaceQueueTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RegisteredUsersTable
-      Events:
-        List:
-          Type: Api
-          Properties:
-            Path: /race-queue
-            Method: POST
             RestApiId:
               Ref: ClientRestApi
 

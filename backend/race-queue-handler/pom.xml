@@ -11,7 +11,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bail-out-from-race-lambda</artifactId>
+    <artifactId>race-queue-handler</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>

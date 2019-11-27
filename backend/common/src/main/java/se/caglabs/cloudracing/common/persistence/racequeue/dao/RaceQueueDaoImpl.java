@@ -4,26 +4,28 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import se.caglabs.cloudracing.common.persistence.racequeue.model.RaceQueue;
 import se.caglabs.cloudracing.common.persistence.stuff.StageNameTableNameResolver;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 
 public class RaceQueueDaoImpl implements RaceQueueDao {
 
-    private AmazonDynamoDB client;
     private DynamoDBMapper mapper;
 
     public RaceQueueDaoImpl() {
-        this.client = AmazonDynamoDBClientBuilder.standard().build();
-        this.mapper = new DynamoDBMapper(this.client, DynamoDBMapperConfig.builder()
+        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard().build();
+        this.mapper = new DynamoDBMapper(client, DynamoDBMapperConfig.builder()
                 .withTableNameResolver(new StageNameTableNameResolver()).build());
+    }
+
+    @Override
+    public List<RaceQueue> getRaceQueue() {
+        return new ArrayList<>(this.mapper.scan(RaceQueue.class, new DynamoDBScanExpression()));
     }
 
     @Override
