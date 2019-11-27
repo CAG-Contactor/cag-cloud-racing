@@ -238,7 +238,7 @@ Resources:
       FunctionName:
         Fn::Sub: registered-user-${StageName}
       CodeUri: registered-user-handler/target/registered-user-handler-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.registereduser.service.RegisteredUserHandler::registerUser
+      Handler: se.caglabs.cloudracing.lambda.registereduser.service.RegisteredUserHandler::route
       Environment:
         Variables:
           Stage: !Ref StageName
@@ -247,36 +247,34 @@ Resources:
           TableName:
             Ref: RegisteredUsersTable
       Events:
-        List:
+        PostEvent:
           Type: Api
           Properties:
             Path: /registered-user
             Method: POST
             RestApiId:
               Ref: ClientRestApi
-
-  GetRegisteredUsersFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: registered-users-${StageName}
-      CodeUri: registered-user-handler/target/registered-user-handler-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.registereduser.service.RegisteredUserHandler::getRegisteredUsers
-      Environment:
-        Variables:
-          Stage: !Ref StageName
-      Policies:
-       DynamoDBCrudPolicy:
-          TableName:
-            Ref: RegisteredUsersTable
-      Events:
-        List:
+        GetUserByName:
+          Type: Api
+          Properties:
+            Path: /registered-user/{name}
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+        GetUsers:
           Type: Api
           Properties:
             Path: /registered-users
             Method: GET
             RestApiId:
               Ref: ClientRestApi
+        #GetUserRace:
+         # Type: Api
+         # Properties:
+         #   Path: /registered-user/{name}/race
+         #   Method: GET
+         #   RestApiId:
+         #   Ref: ClientRestApi
 
   RaceQueueFunction:
     Type: AWS::Serverless::Function
