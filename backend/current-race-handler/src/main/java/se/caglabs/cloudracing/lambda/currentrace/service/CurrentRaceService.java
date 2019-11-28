@@ -1,8 +1,7 @@
-package se.caglabs.cloudracing.lambda.armrace.service;
+package se.caglabs.cloudracing.lambda.currentrace.service;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import se.caglabs.cloudracing.common.persistence.currentrace.dao.CurrentRaceDao;
 import se.caglabs.cloudracing.common.persistence.currentrace.dao.CurrentRaceDaoImpl;
@@ -13,67 +12,65 @@ import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDao;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDaoImpl;
 import se.caglabs.cloudracing.common.persistence.racequeue.model.RaceQueue;
+import java.util.Optional;
 
 @Slf4j
-@NoArgsConstructor
-public class ArmRaceHandler {
-    private RaceQueueDao raceQueueDao;
+public class CurrentRaceService {
 
     private CurrentRaceDao currentRaceDao;
     private RaceDao raceDao;
-    private ArmRaceHandler(RaceQueueDao raceQueueDao, CurrentRaceDao currentRaceDao, RaceDao raceDao) {
-        this.raceQueueDao = raceQueueDao;
-        this.currentRaceDao = currentRaceDao;
-        this.raceDao = raceDao;
+    private RaceQueueDao raceQueueDao;
+
+
+    CurrentRaceService() {
+        this.currentRaceDao = new CurrentRaceDaoImpl();
+        this.raceDao = new RaceDaoImpl();
+        this.raceQueueDao = new RaceQueueDaoImpl();
     }
 
     public APIGatewayProxyResponseEvent armRace(APIGatewayProxyRequestEvent request) {
-        CurrentRace currentRace = getCurrentRaceDao()
+        CurrentRace currentRace = currentRaceDao
                 .getCurrentRace()
                 .orElse(null);
         if (currentRace != null) {
             return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("There is already a current race present");
         }
-
-        RaceQueue nextRace = getRaceQueueDao()
+        RaceQueue nextRace = raceQueueDao
                 .getNextRace()
                 .orElse(null);
         if (nextRace == null) {
             return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("There is no pending race");
         }
-
-        Race race = getRaceDao().findById(nextRace.getRaceId()).orElse(null);
+        Race race = raceDao.findById(nextRace.getRaceId()).orElse(null);
         if (race == null) {
             return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Could not find the race object");
         }
-
-        getRaceQueueDao().remove(race);
+        raceQueueDao.remove(race);
         race.setRaceStatus(Race.RaceStatus.ARMED);
         raceDao.saveRace(race);
-
-        getCurrentRaceDao().saveCurrentRace(new CurrentRace(nextRace.getRaceId()));
-
+        currentRaceDao.saveCurrentRace(new CurrentRace(nextRace.getRaceId()));
         return new APIGatewayProxyResponseEvent().withStatusCode(201);
     }
 
-    private RaceQueueDao getRaceQueueDao() {
-        if (raceQueueDao == null) {
-            raceQueueDao = new RaceQueueDaoImpl();
-        }
-        return raceQueueDao;
+    APIGatewayProxyResponseEvent abortActiveRace(APIGatewayProxyRequestEvent request) {
+        Optional<CurrentRace> currentRace = currentRaceDao.getCurrentRace();
+        return currentRace.map(currRace -> {
+            Optional<Race> race = raceDao.findById(currRace.getRaceId());
+            return race.map(r -> {
+                r.setCreateTime(null);
+                r.setFinishTime(null);
+                r.setSplitTime(null);
+                r.setStartTime(null);
+                r.setRaceStatus(Race.RaceStatus.ABORTED);
+                raceDao.saveRace(r);
+                currentRaceDao.deleteCurrentRace();
+                return new APIGatewayProxyResponseEvent().withStatusCode(201).withBody("OK");
+            }).orElse(new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("Race could not be found"));
+        }).orElse(new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("No ongoing race could be found"));
     }
 
-    private CurrentRaceDao getCurrentRaceDao() {
-        if (currentRaceDao == null) {
-            currentRaceDao = new CurrentRaceDaoImpl();
-        }
-        return currentRaceDao;
-    }
-
-    private RaceDao getRaceDao() {
-        if (raceDao == null) {
-            raceDao = new RaceDaoImpl();
-        }
-        return raceDao;
+    public APIGatewayProxyResponseEvent getCurrentRace() {
+        // TODO
+        return new APIGatewayProxyResponseEvent().withStatusCode(501);
     }
 }
