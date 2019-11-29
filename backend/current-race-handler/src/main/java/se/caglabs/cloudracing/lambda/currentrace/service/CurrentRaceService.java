@@ -2,6 +2,8 @@ package se.caglabs.cloudracing.lambda.currentrace.service;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import se.caglabs.cloudracing.common.persistence.currentrace.dao.CurrentRaceDao;
 import se.caglabs.cloudracing.common.persistence.currentrace.dao.CurrentRaceDaoImpl;
@@ -12,6 +14,7 @@ import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDao;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDaoImpl;
 import se.caglabs.cloudracing.common.persistence.racequeue.model.RaceQueue;
+
 import java.util.Optional;
 
 @Slf4j
@@ -20,12 +23,14 @@ public class CurrentRaceService {
     private CurrentRaceDao currentRaceDao;
     private RaceDao raceDao;
     private RaceQueueDao raceQueueDao;
+    private ObjectMapper mapper;
 
 
     CurrentRaceService() {
         this.currentRaceDao = new CurrentRaceDaoImpl();
         this.raceDao = new RaceDaoImpl();
         this.raceQueueDao = new RaceQueueDaoImpl();
+        mapper = new ObjectMapper();
     }
 
     public APIGatewayProxyResponseEvent armRace(APIGatewayProxyRequestEvent request) {
@@ -70,7 +75,17 @@ public class CurrentRaceService {
     }
 
     public APIGatewayProxyResponseEvent getCurrentRace() {
-        // TODO
-        return new APIGatewayProxyResponseEvent().withStatusCode(501);
+        Optional<CurrentRace> currentRace = currentRaceDao.getCurrentRace();
+        if (currentRace.isPresent()) {
+            Optional<Race> race = raceDao.findById(currentRace.get().getRaceId());
+            if (race.isPresent()) {
+                try {
+                    return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(race.get()));
+                } catch (JsonProcessingException e) {
+                    return new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("Unexpected error mapping result");
+                }
+            }
+        }
+        return new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("No ongoing race could be found");
     }
 }
