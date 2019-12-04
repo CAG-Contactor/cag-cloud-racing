@@ -23,7 +23,7 @@ public class GatePassedHandler {
     private static final String PREFIX_SUCCESS = "Success: ";
     private static final String PREFIX_EXCEPTION = "Exception: ";
     private static final String PREFIX_VALIDATION = "Validation error: ";
-    private static final String MESSAGE_SUCCESS = "Race split time set successfully.";
+    private static final String MESSAGE_SUCCESS = "Race time set successfully for sensor: ";
     private static final String MESSAGE_INVALID_SENSOR_ID = "The sensor-id is invalid.";
     private static final String MESSAGE_SENSOR_ID_MISSING = "QueryString parameter sensor-id is required.";
     private static final String MESSAGE_TIMESTAMP_MISSING = "QueryString parameter timestamp is required.";
@@ -79,7 +79,7 @@ public class GatePassedHandler {
             race.setStartTime(timestamp);
             race.setRaceStatus(Race.RaceStatus.STARTED);
             raceDao.saveRace(race);
-            return success();
+            return success(SENSOR_ID_START);
         } else {
             return validationError(MESSAGE_RACE_NOT_ARMED);
         }
@@ -99,7 +99,7 @@ public class GatePassedHandler {
         if (race.getRaceStatus().equals(Race.RaceStatus.STARTED) && isNullOrZero(race.getSplitTime())) {
             race.setSplitTime(timestamp);
             raceDao.saveRace(race);
-            return success();
+            return success(SENSOR_ID_SPLIT);
         } else {
             return validationError(MESSAGE_RACE_NOT_STARTED);
         }
@@ -126,11 +126,11 @@ public class GatePassedHandler {
         race.setRaceStatus(Race.RaceStatus.FINISHED);
         getRaceDao().saveRace(race);
         getCurrentRaceDao().deleteCurrentRace();
-        return success();
+        return success(SENSOR_ID_FINISH);
     }
 
-    private APIGatewayProxyResponseEvent success() {
-        return response(200, PREFIX_SUCCESS + MESSAGE_SUCCESS);
+    private APIGatewayProxyResponseEvent success(String suffix) {
+        return response(200, PREFIX_SUCCESS + MESSAGE_SUCCESS + suffix);
     }
 
     private APIGatewayProxyResponseEvent validationError(String message) {
