@@ -13,14 +13,22 @@ import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
 import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDaoImpl;
 import se.caglabs.cloudracing.common.persistence.registereduser.exception.UserDaoException;
 import se.caglabs.cloudracing.common.persistence.registereduser.model.User;
+import se.caglabs.cloudracing.common.persistence.session.dao.SessionDao;
+import se.caglabs.cloudracing.common.persistence.session.dao.SessionDaoImpl;
+import se.caglabs.cloudracing.common.persistence.session.model.Session;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @Slf4j
 public class RegisteredUserService {
     private static final String NAME = "name";
     private UserDao userDao;
     private RaceDao raceDao;
+    private SessionDao sessionDao;
     private ObjectMapper mapper;
 
     public RegisteredUserService() {
@@ -79,6 +87,38 @@ public class RegisteredUserService {
         return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(races));
     }
 
+    /**
+     * Login user
+     * @param request is passed
+     * @return the response
+     */
+    APIGatewayProxyResponseEvent userLogin(APIGatewayProxyRequestEvent request) {
+        String body = request.getBody();
+        try {
+            User userRequest = mapper.readValue(body, User.class);
+            if (getUserDao().userExist(userRequest.getName())) {
+                // Read user and check user password
+                User user = getUserDao().getUser(userRequest.getName());
+                log.info("user: " + user);
+                boolean userPasswordIsOk = PasswordDigest.digest(userRequest.getPassword())
+                        .equals(user.getPassword());
+                if (userPasswordIsOk) {
+                    // Create and return session
+                    Session session = Session.of(UUID.randomUUID().toString(), user.getName());
+                    log.info("Session: " + session);
+                    getSessionDao().saveSession(session);
+                    return new APIGatewayProxyResponseEvent()
+                            .withBody(mapper.writeValueAsString(session))
+                            .withStatusCode(201);
+                }
+            }
+            return new APIGatewayProxyResponseEvent().withStatusCode(401);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return new APIGatewayProxyResponseEvent().withStatusCode(500);
+        }
+    }
+
     private RaceDao getRaceDao() {
         if(this.raceDao == null) {
             this.raceDao = new RaceDaoImpl();
@@ -92,5 +132,12 @@ public class RegisteredUserService {
             this.userDao = new UserDaoImpl();
         }
         return this.userDao;
+    }
+
+    private SessionDao getSessionDao() {
+        if(isNull(sessionDao)) {
+            sessionDao = new SessionDaoImpl();
+        }
+        return sessionDao;
     }
 }
