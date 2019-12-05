@@ -17,26 +17,15 @@ public class RegisteredUserHandler {
     private static final String GET = "GET";
     private static final String DELETE = "DELETE";
 
-    private static final String REGEXP_USER = "^/registered-user$";
-    private static final String REGEXP_USERS = "^/registered-users$";
-    private static final String REGEXP_RACE = "^/registered-user/.*/race$";
-
     private RegisteredUserService registeredUserService = new RegisteredUserService();
 
-    public RegisteredUserHandler(){}
+    public RegisteredUserHandler() {
+    }
 
     public APIGatewayProxyResponseEvent route(APIGatewayProxyRequestEvent request, Context context) throws JsonProcessingException {
-
-
-        log.info("Path parameters: " + request.getPathParameters());
-        String path = mapPath(request);
-        log.info("Path: " + path);
-
         String resource = request.getResource();
-        log.info("Resource: " + request.getResource());
 
-//        if(resource.matches(REGEXP_USER)) {
-        if(resource.equalsIgnoreCase(REGISTER_USER)) {
+        if (resource.equalsIgnoreCase(REGISTER_USER)) {
             switch (request.getHttpMethod()) {
                 case POST:
                     return registeredUserService.registerUser(request);
@@ -47,14 +36,13 @@ public class RegisteredUserHandler {
                 default:
                     return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user!");
             }
- //       } else if (resource.matches(REGEXP_USERS)) {
+
         } else if (resource.equalsIgnoreCase(REGISTER_USERS)) {
             if (GET.equals(request.getHttpMethod())) {
                 return registeredUserService.getRegisteredUsers();
             }
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for users!");
- //       } else if(resource.matches(REGEXP_RACE)) {
-        } else if(resource.equalsIgnoreCase(RACE)) {
+        } else if (resource.equalsIgnoreCase(RACE)) {
             if (GET.equals(request.getHttpMethod())) {
                 return registeredUserService.getUserRace(request);
             } else {
@@ -68,9 +56,5 @@ public class RegisteredUserHandler {
         }
 
         return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request!");
-    }
-
-    private String mapPath(APIGatewayProxyRequestEvent request) {
-        return request.getPathParameters() != null ? REGISTER_USER : request.getPath();
     }
 }

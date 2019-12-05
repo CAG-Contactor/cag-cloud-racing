@@ -5,9 +5,8 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class RegisteredUserHandlerTest {
@@ -17,7 +16,7 @@ public class RegisteredUserHandlerTest {
     @Mock
     private Context context;
     @Mock
-    private UserDao userDao;
+    private RegisteredUserService service;
 
     private RegisteredUserHandler registeredUserHandler;
 
@@ -30,11 +29,13 @@ public class RegisteredUserHandlerTest {
     }
 
     @Test
-    public void shouldTriggerRegisterUser1() throws Exception {
+    public void shouldCallRegisterUser() throws Exception {
 
-        when(request.getResource()).thenReturn("/registered-user/Duderino");
-
+        when(request.getResource()).thenReturn("/registered-user/{name}");
+        when(request.getHttpMethod()).thenReturn("POST");
         registeredUserHandler.route(request, context);
+
+        verify(service).registerUser(any(APIGatewayProxyRequestEvent.class));
     }
 
     @Test
