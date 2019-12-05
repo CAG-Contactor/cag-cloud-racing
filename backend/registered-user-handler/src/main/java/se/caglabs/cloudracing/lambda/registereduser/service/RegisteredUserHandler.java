@@ -48,7 +48,7 @@ public class RegisteredUserHandler {
             } else {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user races!");
             }
-        } else if(USER_LOGIN.equals(path)) {
+        } else if(USER_LOGIN.equals(resource)) {
             if (POST.equals(request.getHttpMethod())) {
                 return registeredUserService.userLogin(request);
             }
