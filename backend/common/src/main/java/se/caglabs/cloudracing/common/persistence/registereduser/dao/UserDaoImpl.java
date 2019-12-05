@@ -23,6 +23,7 @@ public class UserDaoImpl implements UserDao {
                 .withTableNameResolver(new StageNameTableNameResolver()).build());
     }
 
+    @Override
     public void saveUser(User newUser) throws UserDaoException {
         if(userExists(newUser)) {
             throw new UserDaoException("User with name [" + newUser.getName() + "] already exists!");
@@ -31,16 +32,24 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
+    @Override
     public User getUser(String name) {
         return this.mapper.load(User.class, name);
     }
 
+    @Override
     public List<User> listUsers() {
         return this.mapper.scan(User.class, new DynamoDBScanExpression());
     }
 
+    @Override
     public boolean userExist(String name) {
         return listUsers().stream().anyMatch(user -> user.getName().equals(name));
+    }
+
+    @Override
+    public void deleteUser(User name) {
+        this.mapper.delete(name);
     }
 
     private boolean userExists(User newUser) {

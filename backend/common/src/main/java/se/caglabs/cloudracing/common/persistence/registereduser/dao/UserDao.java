@@ -10,4 +10,5 @@ public interface UserDao {
     void saveUser(User user) throws UserDaoException;
     List<User> listUsers();
     boolean userExist(String name);
+    void deleteUser(User name);
 }
