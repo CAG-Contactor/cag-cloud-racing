@@ -9,12 +9,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RegisteredUserHandler {
 
-    private static final String REGISTER_USER = "/registered-user";
+    private static final String REGISTER_USER = "/registered-user/{name}";
     private static final String REGISTER_USERS = "/registered-users";
-    private static final String RACE = "/race";
+    private static final String RACE = "/registered-user/{name}/race";
     private static final String POST = "POST";
     private static final String GET = "GET";
     private static final String DELETE = "DELETE";
+
+    private static final String REGEXP_USER = "^/registered-user$";
+    private static final String REGEXP_USERS = "^/registered-users$";
+    private static final String REGEXP_RACE = "^/registered-user/.*/race$";
 
     private RegisteredUserService registeredUserService = new RegisteredUserService();
 
@@ -22,9 +26,16 @@ public class RegisteredUserHandler {
 
     public APIGatewayProxyResponseEvent route(APIGatewayProxyRequestEvent request, Context context) throws JsonProcessingException {
 
-        String path = mapPath(request);
 
-        if(REGISTER_USER.equals(path)) {
+        log.info("Path parameters: " + request.getPathParameters());
+        String path = mapPath(request);
+        log.info("Path: " + path);
+
+        String resource = request.getResource();
+        log.info("Resource: " + request.getResource());
+
+//        if(resource.matches(REGEXP_USER)) {
+        if(resource.equalsIgnoreCase(REGISTER_USER)) {
             switch (request.getHttpMethod()) {
                 case POST:
                     return registeredUserService.registerUser(request);
@@ -35,16 +46,19 @@ public class RegisteredUserHandler {
                 default:
                     return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user!");
             }
-        } else if (REGISTER_USERS.equals(path)) {
+ //       } else if (resource.matches(REGEXP_USERS)) {
+        } else if (resource.equalsIgnoreCase(REGISTER_USERS)) {
             if (GET.equals(request.getHttpMethod())) {
                 return registeredUserService.getRegisteredUsers();
             }
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for users!");
-        } else if(RACE.equals(path)) {
+ //       } else if(resource.matches(REGEXP_RACE)) {
+        } else if(resource.equalsIgnoreCase(RACE)) {
             if (GET.equals(request.getHttpMethod())) {
                 return registeredUserService.getUserRace(request);
+            } else {
+                return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user races!");
             }
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user races!");
         }
 
         return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request!");

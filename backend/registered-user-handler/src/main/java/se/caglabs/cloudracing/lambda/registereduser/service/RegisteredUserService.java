@@ -6,6 +6,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import se.caglabs.cloudracing.common.persistence.digest.PasswordDigest;
+import se.caglabs.cloudracing.common.persistence.race.dao.RaceDao;
+import se.caglabs.cloudracing.common.persistence.race.dao.RaceDaoImpl;
+import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
 import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDaoImpl;
 import se.caglabs.cloudracing.common.persistence.registereduser.exception.UserDaoException;
@@ -16,7 +19,8 @@ import java.util.List;
 @Slf4j
 public class RegisteredUserService {
     private static final String NAME = "name";
-    private UserDao dao;
+    private UserDao userDao;
+    private RaceDao raceDao;
     private ObjectMapper mapper;
 
     public RegisteredUserService() {
@@ -70,14 +74,23 @@ public class RegisteredUserService {
      */
     APIGatewayProxyResponseEvent getUserRace(APIGatewayProxyRequestEvent request) throws JsonProcessingException {
         User user = getUserDao().getUser(request.getPathParameters().get(NAME));
+        List<Race> races = getRaceDao().findAllByUserName(user.getName());
 
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(user));
+        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(races));
+    }
+
+    private RaceDao getRaceDao() {
+        if(this.raceDao == null) {
+            this.raceDao = new RaceDaoImpl();
+        }
+
+        return this.raceDao;
     }
 
     private UserDao getUserDao() {
-        if(this.dao == null) {
-            this.dao = new UserDaoImpl();
+        if(this.userDao == null) {
+            this.userDao = new UserDaoImpl();
         }
-        return this.dao;
+        return this.userDao;
     }
 }

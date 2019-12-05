@@ -52,7 +52,7 @@ public class RaceQueueService {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("name required to bail out of race");
         }
 
-        Optional<Race> raceToBailOut = raceDao.findByUserName(userDTO.getName());
+        Optional<Race> raceToBailOut = raceDao.findIdleByUserName(userDTO.getName());
         if (raceToBailOut.isPresent()) {
             Race race = raceToBailOut.get();
             race.setRaceStatus(Race.RaceStatus.ABORTED);

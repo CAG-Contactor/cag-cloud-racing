@@ -164,9 +164,12 @@ Resources:
         Variables:
           Stage: !Ref StageName
       Policies:
-        DynamoDBCrudPolicy:
-          TableName:
-            Ref: RegisteredUsersTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RegisteredUsersTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
       Events:
         RegisterUser:
           Type: Api
@@ -196,13 +199,13 @@ Resources:
             Method: GET
             RestApiId:
               Ref: ClientRestApi
-        #GetUserRace:
-          # Type: Api
-            # Properties:
-            # Path: /registered-user/{name}/race
-            # Method: GET
-              # RestApiId:
-              # Ref: ClientRestApi
+        GetUserRace:
+          Type: Api
+          Properties:
+            Path: /registered-user/{name}/race
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
 
   RaceQueueFunction:
     Type: AWS::Serverless::Function

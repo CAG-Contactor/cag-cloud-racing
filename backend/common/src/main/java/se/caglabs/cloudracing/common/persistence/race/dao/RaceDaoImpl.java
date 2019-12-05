@@ -42,7 +42,7 @@ public class RaceDaoImpl implements RaceDao {
     }
 
     @Override
-    public Optional<Race> findByUserName(String userName) {
+    public Optional<Race> findIdleByUserName(String userName) {
 
         Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
         eav.put(":name", new AttributeValue().withS(userName));
@@ -58,6 +58,18 @@ public class RaceDaoImpl implements RaceDao {
             raceOptional = Optional.ofNullable(scanResult.get(0));
         }
         return raceOptional;
+    }
+
+    @Override
+    public List<Race> findAllByUserName(String username) {
+
+        Map<String, AttributeValue> attributes = new HashMap<String, AttributeValue>();
+        attributes.put(":name", new AttributeValue().withS(username));
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withFilterExpression("userName = :name").withExpressionAttributeValues(attributes);
+
+        return mapper.scan(Race.class, scanExpression);
     }
 
     @Override

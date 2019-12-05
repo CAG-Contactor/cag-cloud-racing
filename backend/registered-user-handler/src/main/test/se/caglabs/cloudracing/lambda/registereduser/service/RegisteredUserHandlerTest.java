@@ -1,13 +1,21 @@
 package se.caglabs.cloudracing.lambda.registereduser.service;
 
+import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
+
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class RegisteredUserHandlerTest {
 
     @Mock
     private APIGatewayProxyRequestEvent request;
+    @Mock
+    private Context context;
     @Mock
     private UserDao userDao;
 
@@ -15,41 +23,26 @@ public class RegisteredUserHandlerTest {
 
     private String jsonBody = "{\"name\":\"stefan\", \"password\":\"aik4ever\", \"type\":\"CONTESTANT\"}";
 
-    /*@Before
+    @Before
     public void setup() {
         initMocks(this);
-        registeredUserHandler = new RegisteredUserHandler(userDao);
+        registeredUserHandler = new RegisteredUserHandler();
     }
 
     @Test
-    public void shouldReturn_201Created() throws UserDaoException {
-        when(request.getBody()).thenReturn(jsonBody);
+    public void shouldTriggerRegisterUser1() throws Exception {
 
-        APIGatewayProxyResponseEvent event = registeredUserHandler.registerUser(request);
+        when(request.getResource()).thenReturn("/registered-user/Duderino");
 
-        assertThat(event.getStatusCode(), is(201));
-        assertThat(event.getBody(), is("Created"));
+        registeredUserHandler.route(request, context);
     }
 
     @Test
-    public void shouldReturn_400BadRequest() throws UserDaoException {
-        String jsonBody = "{\"wrong\":\"stefan\", \"password\":\"aik4ever\", \"type\":\"CONTESTANT\"}";
-        when(request.getBody()).thenReturn(jsonBody);
+    public void shouldTriggerRegisterUser() throws Exception {
 
-        APIGatewayProxyResponseEvent event = registeredUserHandler.registerUser(request);
+        when(request.getResource()).thenReturn("/registered-user/Duderino/race");
 
-        assertThat(event.getStatusCode(), is(400));
-        assertThat(event.getBody(), is("Bad input values!"));
+        registeredUserHandler.route(request, context);
     }
-
-    @Test
-    public void shouldReturn_409BadRequest() throws UserDaoException {
-        when(request.getBody()).thenReturn(jsonBody);
-        doThrow(UserDaoException.class).when(userDao).saveUser(any(User.class));
-        APIGatewayProxyResponseEvent event = registeredUserHandler.registerUser(request);
-
-        assertThat(event.getStatusCode(), is(409));
-        assertThat(event.getBody(), is("Contestant already exists!"));
-    }*/
 }
 
