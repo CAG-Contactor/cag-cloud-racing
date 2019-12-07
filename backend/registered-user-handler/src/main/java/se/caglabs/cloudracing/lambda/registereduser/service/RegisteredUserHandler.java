@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RegisteredUserHandler {
 
+    private static final String REGISTER_NEW_USER = "/registered-user";
     private static final String REGISTER_USER = "/registered-user/{name}";
     private static final String REGISTER_USERS = "/registered-users";
     private static final String RACE = "/registered-user/{name}/race";
@@ -17,40 +18,43 @@ public class RegisteredUserHandler {
     private static final String GET = "GET";
     private static final String DELETE = "DELETE";
 
-    private RegisteredUserService registeredUserService = new RegisteredUserService();
+    private RegisteredUserService service = new RegisteredUserService();
 
     public RegisteredUserHandler() {
+    }
+
+    public RegisteredUserHandler(RegisteredUserService service) {
+        this.service = service;
     }
 
     public APIGatewayProxyResponseEvent route(APIGatewayProxyRequestEvent request, Context context) throws JsonProcessingException {
         String resource = request.getResource();
 
-        if (resource.equalsIgnoreCase(REGISTER_USER)) {
+        if (resource.equalsIgnoreCase(REGISTER_USER) || resource.equalsIgnoreCase(REGISTER_NEW_USER) ) {
             switch (request.getHttpMethod()) {
                 case POST:
-                    return registeredUserService.registerUser(request);
+                    return service.registerUser(request);
                 case GET:
-                    return registeredUserService.getRegisteredUser(request);
+                    return service.getRegisteredUser(request);
                 case DELETE:
-                    return registeredUserService.deleteRegisteredUser(request);
+                    return service.deleteRegisteredUser(request);
                 default:
                     return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user!");
             }
-
         } else if (resource.equalsIgnoreCase(REGISTER_USERS)) {
             if (GET.equals(request.getHttpMethod())) {
-                return registeredUserService.getRegisteredUsers();
+                return service.getRegisteredUsers();
             }
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for users!");
+            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for registered users!");
         } else if (resource.equalsIgnoreCase(RACE)) {
             if (GET.equals(request.getHttpMethod())) {
-                return registeredUserService.getUserRace(request);
+                return service.getUserRace(request);
             } else {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user races!");
             }
         } else if(USER_LOGIN.equals(resource)) {
             if (POST.equals(request.getHttpMethod())) {
-                return registeredUserService.userLogin(request);
+                return service.userLogin(request);
             }
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for login user!");
         }

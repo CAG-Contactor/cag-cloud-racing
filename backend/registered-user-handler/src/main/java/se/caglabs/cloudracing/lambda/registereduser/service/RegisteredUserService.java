@@ -18,7 +18,6 @@ import se.caglabs.cloudracing.common.persistence.session.dao.SessionDaoImpl;
 import se.caglabs.cloudracing.common.persistence.session.model.Session;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
@@ -36,6 +35,10 @@ public class RegisteredUserService {
 
     }
 
+    /**
+     * Register a new user.
+     *
+     */
     APIGatewayProxyResponseEvent registerUser(APIGatewayProxyRequestEvent request) {
 
         log.info("Registering new user " + request.getBody());

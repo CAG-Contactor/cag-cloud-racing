@@ -2,10 +2,13 @@ package se.caglabs.cloudracing.lambda.registereduser.service;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
+import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -25,25 +28,48 @@ public class RegisteredUserHandlerTest {
     @Before
     public void setup() {
         initMocks(this);
-        registeredUserHandler = new RegisteredUserHandler();
+        registeredUserHandler = new RegisteredUserHandler(service);
     }
 
     @Test
-    public void shouldCallRegisterUser() throws Exception {
-
-        when(request.getResource()).thenReturn("/registered-user/{name}");
+    public void shouldRegisterANewUser() throws Exception {
+        when(request.getResource()).thenReturn("/registered-user");
         when(request.getHttpMethod()).thenReturn("POST");
+
         registeredUserHandler.route(request, context);
 
-        verify(service).registerUser(any(APIGatewayProxyRequestEvent.class));
+        verify(service, times(1)).registerUser(request);
     }
 
     @Test
-    public void shouldTriggerRegisterUser() throws Exception {
-
-        when(request.getResource()).thenReturn("/registered-user/Duderino/race");
+    public void shouldGetAUser() throws Exception {
+        when(request.getResource()).thenReturn("/registered-user/{name}");
+        when(request.getHttpMethod()).thenReturn("GET");
 
         registeredUserHandler.route(request, context);
+
+        verify(service, times(1)).getRegisteredUser(request);
+    }
+
+    @Test
+    public void shouldDeleteAUser() throws Exception {
+        when(request.getResource()).thenReturn("/registered-user/{name}");
+        when(request.getHttpMethod()).thenReturn("DELETE");
+
+        registeredUserHandler.route(request, context);
+
+        verify(service, times(1)).deleteRegisteredUser(request);
+    }
+
+
+    @Test
+    public void shouldReturnBadRequest() throws Exception {
+        when(request.getResource()).thenReturn("/registered-user/{name}");
+        when(request.getHttpMethod()).thenReturn("NOT_APPLICABLE");
+
+        APIGatewayProxyResponseEvent event = registeredUserHandler.route(request, context);
+        assertThat(event.getBody(), is("Bad request for user!"));
+        assertThat(event.getStatusCode(), is(400));
     }
 }
 
