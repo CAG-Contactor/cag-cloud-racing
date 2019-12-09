@@ -33,7 +33,7 @@ public class CurrentRaceService {
         mapper = new ObjectMapper();
     }
 
-    public APIGatewayProxyResponseEvent armRace(APIGatewayProxyRequestEvent request) {
+    public APIGatewayProxyResponseEvent armRace(APIGatewayProxyRequestEvent request) throws JsonProcessingException {
         CurrentRace currentRace = currentRaceDao
                 .getCurrentRace()
                 .orElse(null);
@@ -54,7 +54,7 @@ public class CurrentRaceService {
         race.setRaceStatus(Race.RaceStatus.ARMED);
         raceDao.saveRace(race);
         currentRaceDao.saveCurrentRace(new CurrentRace(nextRace.getRaceId()));
-        return new APIGatewayProxyResponseEvent().withStatusCode(201);
+        return new APIGatewayProxyResponseEvent().withStatusCode(201).withBody(mapper.writeValueAsString(race));
     }
 
     APIGatewayProxyResponseEvent abortActiveRace(APIGatewayProxyRequestEvent request) {

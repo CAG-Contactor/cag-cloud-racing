@@ -19,4 +19,6 @@ public class RaceQueue {
     private String raceId;
     @DynamoDBAttribute(attributeName="createTime")
     private Long createTime;
+    @DynamoDBAttribute(attributeName="userName")
+    private String userName;
 }
