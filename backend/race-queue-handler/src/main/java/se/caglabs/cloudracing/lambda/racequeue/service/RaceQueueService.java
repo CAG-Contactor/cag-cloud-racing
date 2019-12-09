@@ -36,6 +36,7 @@ public class RaceQueueService {
         String json;
         try {
             json = mapper.writeValueAsString(raceQueueDao.getRaceQueue());
+
         } catch (JsonProcessingException e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Failed to convert value to json");
         }
@@ -52,7 +53,7 @@ public class RaceQueueService {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("name required to bail out of race");
         }
 
-        Optional<Race> raceToBailOut = raceDao.findByUserName(userDTO.getName());
+        Optional<Race> raceToBailOut = raceDao.findIdleByUserName(userDTO.getName());
         if (raceToBailOut.isPresent()) {
             Race race = raceToBailOut.get();
             race.setRaceStatus(Race.RaceStatus.ABORTED);
@@ -96,6 +97,7 @@ public class RaceQueueService {
         RaceQueue raceQueue = RaceQueue.builder()
                 .raceId(race.getId())
                 .createTime(race.getCreateTime())
+                .userName(race.getUserName())
                 .build();
 
         raceQueueDao.saveRaceInQueue(raceQueue);

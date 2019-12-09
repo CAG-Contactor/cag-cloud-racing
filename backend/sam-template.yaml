@@ -164,9 +164,15 @@ Resources:
         Variables:
           Stage: !Ref StageName
       Policies:
-        DynamoDBCrudPolicy:
-          TableName:
-            Ref: RegisteredUsersTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RegisteredUsersTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: SessionsTable
       Events:
         RegisterUser:
           Type: Api
@@ -196,13 +202,20 @@ Resources:
             Method: GET
             RestApiId:
               Ref: ClientRestApi
-        #GetUserRace:
-          # Type: Api
-            # Properties:
-            # Path: /registered-user/{name}/race
-            # Method: GET
-              # RestApiId:
-              # Ref: ClientRestApi
+        GetUserRace:
+          Type: Api
+          Properties:
+            Path: /registered-user/{name}/race
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+        UserLogin:
+          Type: Api
+          Properties:
+            Path: /user-login
+            Method: POST
+            RestApiId:
+              Ref: ClientRestApi
 
   RaceQueueFunction:
     Type: AWS::Serverless::Function
@@ -291,29 +304,26 @@ Resources:
             RestApiId:
               Ref: ClientRestApi
 
-  UserLoginFunction:
+  LeaderBoardFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: user-login-${StageName}
-      CodeUri: user-login-lambda/target/user-login-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.userlogin.service.UserLoginHandler::userLogin
+        Fn::Sub: leader-board-${StageName}
+      CodeUri: leader-board-handler/target/leader-board-handler-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.leaderboard.service.LeaderBoardHandler::execute
       Environment:
         Variables:
           Stage: !Ref StageName
       Policies:
         - DynamoDBCrudPolicy:
             TableName:
-              Ref: RegisteredUsersTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: SessionsTable
+              Ref: RacesTable
       Events:
-        List:
+        GetEvent:
           Type: Api
           Properties:
-            Path: /user-login
-            Method: POST
+            Path: /leader-board
+            Method: GET
             RestApiId:
               Ref: ClientRestApi
 

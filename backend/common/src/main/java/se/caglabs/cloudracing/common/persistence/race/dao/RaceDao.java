@@ -2,6 +2,7 @@ package se.caglabs.cloudracing.common.persistence.race.dao;
 
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RaceDao {
@@ -15,7 +16,12 @@ public interface RaceDao {
 
     Optional<Race> findById(String id);
 
-    Optional<Race> findByUserName(String userName);
+    Optional<Race> findIdleByUserName(String userName);
+
+    List<Race> findAll();
+
+    List<Race> findAllByUserName(String username);
 
     void saveRace(Race race);
+
 }
