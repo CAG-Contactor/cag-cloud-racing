@@ -61,15 +61,95 @@ public class RegisteredUserHandlerTest {
         verify(service, times(1)).deleteRegisteredUser(request);
     }
 
-
     @Test
-    public void shouldReturnBadRequest() throws Exception {
-        when(request.getResource()).thenReturn("/registered-user/{name}");
-        when(request.getHttpMethod()).thenReturn("NOT_APPLICABLE");
+    public void shouldReturnBadRequest_GetRegisteredUSer() throws Exception {
+        when(request.getResource()).thenReturn("/registered-user");
+        when(request.getHttpMethod()).thenReturn("PUT");
+
+        registeredUserHandler.route(request, context);
 
         APIGatewayProxyResponseEvent event = registeredUserHandler.route(request, context);
         assertThat(event.getBody(), is("Bad request for user!"));
         assertThat(event.getStatusCode(), is(400));
     }
+
+
+    @Test
+    public void shouldGetAllUsers() throws Exception {
+        when(request.getResource()).thenReturn("/registered-users");
+        when(request.getHttpMethod()).thenReturn("GET");
+
+        registeredUserHandler.route(request, context);
+
+        verify(service, times(1)).getRegisteredUsers();
+    }
+
+    @Test
+    public void shouldReturnBadRequest_GetAllUsers() throws Exception {
+        when(request.getResource()).thenReturn("/registered-users");
+        when(request.getHttpMethod()).thenReturn("POST");
+
+        registeredUserHandler.route(request, context);
+
+        APIGatewayProxyResponseEvent event = registeredUserHandler.route(request, context);
+        assertThat(event.getBody(), is("Bad request for registered users!"));
+        assertThat(event.getStatusCode(), is(400));
+    }
+
+    @Test
+    public void shouldGetRacesForUsers() throws Exception {
+        when(request.getResource()).thenReturn("/registered-user/{name}/race");
+        when(request.getHttpMethod()).thenReturn("GET");
+
+        registeredUserHandler.route(request, context);
+
+        verify(service, times(1)).getUserRace(request);
+    }
+
+    @Test
+    public void shouldReturnBadRequest_GetRacesForUsers() throws Exception {
+        when(request.getResource()).thenReturn("/registered-user/{name}/race");
+        when(request.getHttpMethod()).thenReturn("POST");
+
+        registeredUserHandler.route(request, context);
+
+        APIGatewayProxyResponseEvent event = registeredUserHandler.route(request, context);
+        assertThat(event.getBody(), is("Bad request for user races!"));
+        assertThat(event.getStatusCode(), is(400));
+    }
+
+    @Test
+    public void shouldLoginUser() throws Exception {
+        when(request.getResource()).thenReturn("/user-login");
+        when(request.getHttpMethod()).thenReturn("POST");
+
+        registeredUserHandler.route(request, context);
+
+        verify(service, times(1)).userLogin(request);
+    }
+
+    @Test
+    public void shouldReturnBadRequest_LoginUser() throws Exception {
+        when(request.getResource()).thenReturn("/user-login");
+        when(request.getHttpMethod()).thenReturn("GET");
+
+        registeredUserHandler.route(request, context);
+
+        APIGatewayProxyResponseEvent event = registeredUserHandler.route(request, context);
+        assertThat(event.getBody(), is("Bad request for login user!"));
+        assertThat(event.getStatusCode(), is(400));
+    }
+
+
+    @Test
+    public void shouldReturnBadRequest() throws Exception {
+        when(request.getResource()).thenReturn("/unknown}");
+        when(request.getHttpMethod()).thenReturn("NOT_APPLICABLE");
+
+        APIGatewayProxyResponseEvent event = registeredUserHandler.route(request, context);
+        assertThat(event.getBody(), is("Bad request!"));
+        assertThat(event.getStatusCode(), is(400));
+    }
+
 }
 
