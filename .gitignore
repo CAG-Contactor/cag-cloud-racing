@@ -15,3 +15,5 @@ sam-template-output.yaml
 *.ipr
 *.iws
 
+node_modules/
+

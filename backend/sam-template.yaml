@@ -126,13 +126,13 @@ Resources:
 
   # Lambdas
   # RaspberryRestApi
-  StartGatePassageDetectedFunction:
+  GatePassageDetectedFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: start-gate-passage-detected-${StageName}
-      CodeUri: start-gate-passage-detected-lambda/target/start-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.startgatepassedlambda.service.StartGatePassedHandler::execute
+        Fn::Sub: gate-passage-detected-${StageName}
+      CodeUri: gate-passage-detected-lambda/target/gate-passage-detected-lambda-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.gatepassedlambda.service.GatePassedHandler::execute
       Environment:
         Variables:
           Stage: !Ref StageName
@@ -147,149 +147,19 @@ Resources:
         List:
           Type: Api
           Properties:
-            Path: /start-gate-passed
-            Method: POST
-            RestApiId:
-              Ref: RaspberryRestApi
-
-  SplitGatePassageDetectedFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: split-gate-passage-detected-${StageName}
-      CodeUri: split-gate-passage-detected-lambda/target/split-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.splitgatepassedlambda.service.SplitGatePassedHandler::execute
-      Environment:
-        Variables:
-          Stage: !Ref StageName
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RacesTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: CurrentRaceTable
-      Events:
-        List:
-          Type: Api
-          Properties:
-            Path: /split-gate-passed
-            Method: POST
-            RestApiId:
-              Ref: RaspberryRestApi
-
-  FinishGatePassageDetectedFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: finish-gate-passage-detected-${StageName}
-      CodeUri: finish-gate-passage-detected-lambda/target/finish-gate-passage-detected-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.finishgatepassedlambda.service.FinishGatePassedHandler::execute
-      Environment:
-        Variables:
-          Stage: !Ref StageName
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RacesTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: CurrentRaceTable
-      Events:
-        List:
-          Type: Api
-          Properties:
-            Path: /finish-gate-passed
+            Path: /gate-passed
             Method: POST
             RestApiId:
               Ref: RaspberryRestApi
 
   # ClientRestApi
-  RegisterContestantFunction:
+  RegisterUserFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: register-contestant-${StageName}
-      CodeUri: register-contestant-lambda/target/register-contestant-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.registercontestant.service.RegisterContestantHandler::createContestant
-      Environment:
-        Variables:
-          Stage: !Ref StageName
-      Policies:
-        DynamoDBCrudPolicy:
-          TableName:
-            Ref: RegisteredUsersTable
-      Events:
-        List:
-          Type: Api
-          Properties:
-            Path: /registered-users
-            Method: POST
-            RestApiId:
-              Ref: ClientRestApi
-
-  BailOutFromRaceFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: bail-out-from-race-${StageName}
-      CodeUri: bail-out-from-race-lambda/target/bail-out-from-race-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.bailoutfromrace.service.BailOutFromRaceHandler::bailOutFromRace
-      Environment:
-        Variables:
-          Stage: !Ref StageName
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RacesTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RaceQueueTable
-      Events:
-        List:
-          Type: Api
-          Properties:
-            Path: /race-queue
-            Method: DELETE
-            RestApiId:
-              Ref: ClientRestApi
-
-  ArmRaceFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: arm-race-${StageName}
-      CodeUri: arm-race-lambda/target/arm-race-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.armrace.service.ArmRaceHandler::armRace
-      Environment:
-        Variables:
-          Stage: !Ref StageName
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RacesTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: CurrentRaceTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RaceQueueTable
-      Events:
-        List:
-          Type: Api
-          Properties:
-            Path: /current-race
-            Method: POST
-            RestApiId:
-              Ref: ClientRestApi
-
-  UserLoginFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: user-login-${StageName}
-      CodeUri: user-login-lambda/target/user-login-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.userlogin.service.UserLoginHandler::userLogin
+        Fn::Sub: registered-user-${StageName}
+      CodeUri: registered-user-handler/target/registered-user-handler-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.registereduser.service.RegisteredUserHandler::route
       Environment:
         Variables:
           Stage: !Ref StageName
@@ -299,9 +169,47 @@ Resources:
               Ref: RegisteredUsersTable
         - DynamoDBCrudPolicy:
             TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
               Ref: SessionsTable
       Events:
-        List:
+        RegisterUser:
+          Type: Api
+          Properties:
+            Path: /registered-user
+            Method: POST
+            RestApiId:
+              Ref: ClientRestApi
+        DeleteUserByName:
+          Type: Api
+          Properties:
+            Path: /registered-user/{name}
+            Method: DELETE
+            RestApiId:
+              Ref: ClientRestApi
+        GetUserByName:
+          Type: Api
+          Properties:
+            Path: /registered-user/{name}
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+        GetUsers:
+          Type: Api
+          Properties:
+            Path: /registered-users
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+        GetUserRace:
+          Type: Api
+          Properties:
+            Path: /registered-user/{name}/race
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+        UserLogin:
           Type: Api
           Properties:
             Path: /user-login
@@ -309,39 +217,13 @@ Resources:
             RestApiId:
               Ref: ClientRestApi
 
-  AbortActiveRaceFunction:
+  RaceQueueFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName:
-        Fn::Sub: abort-active-race-${StageName}
-      CodeUri: abort-active-race-lambda/target/abort-active-race-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.abortactiverace.service.AbortActiveRaceHandler::abortActiveRace
-      Environment:
-        Variables:
-          Stage: !Ref StageName
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RacesTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: CurrentRaceTable
-      Events:
-        List:
-          Type: Api
-          Properties:
-            Path: /current-race
-            Method: DELETE
-            RestApiId:
-              Ref: ClientRestApi
-
-  SignupForRaceFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-        Fn::Sub: signup-for-race-${StageName}
-      CodeUri: signup-for-race-lambda/target/signup-for-race-lambda-1.0-SNAPSHOT.jar
-      Handler: se.caglabs.cloudracing.lambda.signupforrace.service.SignUpForRaceHandler::signUpForRace
+        Fn::Sub: race-queue-${StageName}
+      CodeUri: race-queue-handler/target/race-queue-handler-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.racequeue.service.RaceQueueHandler::route
       Environment:
         Variables:
           Stage: !Ref StageName
@@ -356,10 +238,68 @@ Resources:
             TableName:
               Ref: RegisteredUsersTable
       Events:
-        List:
+        DeleteEvent:
           Type: Api
           Properties:
             Path: /race-queue
+            Method: DELETE
+            RestApiId:
+              Ref: ClientRestApi
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /race-queue
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+        PostEvent:
+          Type: Api
+          Properties:
+            Path: /race-queue
+            Method: POST
+            RestApiId:
+              Ref: ClientRestApi
+
+
+  CurrentRaceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: current-race-${StageName}
+      CodeUri: current-race-handler/target/current-race-handler-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.currentrace.service.CurrentRaceHandler::route
+      Environment:
+        Variables:
+          Stage: !Ref StageName
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RaceQueueTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: CurrentRaceTable
+      Events:
+        DeleteEvent:
+          Type: Api
+          Properties:
+            Path: /current-race
+            Method: DELETE
+            RestApiId:
+              Ref: ClientRestApi
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /current-race
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+        PostEvent:
+          Type: Api
+          Properties:
+            Path: /current-race
             Method: POST
             RestApiId:
               Ref: ClientRestApi

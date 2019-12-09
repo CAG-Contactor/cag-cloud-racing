@@ -16,6 +16,9 @@ The _Racing manager_ provides interfaces for the clients
 #### AWS Implementation
 The proposed implementation using AWS is illustrated [here](https://drive.google.com/file/d/1enmsnM97tp0FsPzq2BGzctTi64KrAt9m/view?usp=sharing).
 
+#### REST-API
+The REST-API is specified [here](https://docs.google.com/spreadsheets/d/11OvLXVSf2EIx9TzIk9kV7NqP7StmEuQXj9pO7oC09pw/edit#gid=0).
+
 ### UI for administrator
 This UI provides the following features
 
