@@ -61,6 +61,11 @@ public class RaceDaoImpl implements RaceDao {
     }
 
     @Override
+    public List<Race> findAll() {
+        return this.mapper.scan(Race.class, new DynamoDBScanExpression());
+    }
+
+    @Override
     public List<Race> findAllByUserName(String username) {
 
         Map<String, AttributeValue> attributes = new HashMap<String, AttributeValue>();

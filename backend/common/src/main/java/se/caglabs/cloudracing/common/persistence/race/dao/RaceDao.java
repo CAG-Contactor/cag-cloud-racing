@@ -17,6 +17,9 @@ public interface RaceDao {
     Optional<Race> findById(String id);
 
     Optional<Race> findIdleByUserName(String userName);
+
+    List<Race> findAll();
+
     List<Race> findAllByUserName(String username);
 
     void saveRace(Race race);

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 public class RaceQueueDaoImpl implements RaceQueueDao {
@@ -25,7 +26,9 @@ public class RaceQueueDaoImpl implements RaceQueueDao {
 
     @Override
     public List<RaceQueue> getRaceQueue() {
-        return new ArrayList<>(this.mapper.scan(RaceQueue.class, new DynamoDBScanExpression()));
+        return new ArrayList<>(this.mapper.scan(RaceQueue.class, new DynamoDBScanExpression())).stream()
+                .sorted(Comparator.comparingLong(RaceQueue::getCreateTime))
+                .collect(Collectors.toList());
     }
 
     @Override

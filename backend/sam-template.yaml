@@ -304,6 +304,29 @@ Resources:
             RestApiId:
               Ref: ClientRestApi
 
+  LeaderBoardFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: leader-board-${StageName}
+      CodeUri: leader-board-handler/target/leader-board-handler-1.0-SNAPSHOT.jar
+      Handler: se.caglabs.cloudracing.lambda.leaderboard.service.LeaderBoardHandler::execute
+      Environment:
+        Variables:
+          Stage: !Ref StageName
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+      Events:
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /leader-board
+            Method: GET
+            RestApiId:
+              Ref: ClientRestApi
+
   # DynamoDB
   RegisteredUsersTable:
     Type: AWS::Serverless::SimpleTable
