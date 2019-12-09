@@ -49,7 +49,7 @@ public class RaceQueueDaoImpl implements RaceQueueDao {
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
         PaginatedScanList<RaceQueue> races = this.mapper.scan(RaceQueue.class, scanExpression);
         return races.stream()
-                .max(Comparator.comparingLong(RaceQueue::getCreateTime));
+                .min(Comparator.comparingLong(RaceQueue::getCreateTime));
     }
 
     @Override
