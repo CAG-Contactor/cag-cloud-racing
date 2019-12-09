@@ -1,11 +1,10 @@
 import React from 'react'
 import { useState } from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
-
+import { Container, Row } from 'react-bootstrap'
 import './App.css'
 import { HashRouter, Route, Link } from "react-router-dom"
 import { Navbar, Nav } from 'react-bootstrap'
-import Registration from './pages/registration'
+import Queue from './pages/queue'
 import SignIn from './pages/sign-in'
 import SignUp from './pages/sign-up'
 import { useSelector } from 'react-redux';
@@ -13,9 +12,8 @@ import { useSelector } from 'react-redux';
 
 const App: React.FC = () => {
   const isLoggedIn = useSelector((state: any) => state.loginState.isLoggedIn)
-  console.log(useSelector((state: any) => state.loginState))
 
-  return !isLoggedIn ? <AppAuthenticated /> : <AppUnAuthenticated />
+  return isLoggedIn ? <AppAuthenticated /> : <AppUnAuthenticated />
 }
 
 function AppUnAuthenticated() {
@@ -46,7 +44,7 @@ function AppAuthenticated() {
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
               <Link to='/' className="nav-link">Home</Link>
-              <Link to='/registration' className="nav-link">Registration</Link>
+              <Link to='/queue' className="nav-link">Queue</Link>
               <Link to='/race' className="nav-link">Race</Link>
               <Link to='/leaderboard' className="nav-link">Leaderboard</Link>
               <Link to='/my-races' className="nav-link">My races</Link>
@@ -55,8 +53,8 @@ function AppAuthenticated() {
         </Navbar>
 
 
-        <Route path="/registration">
-          <Registration />
+        <Route path="/queue">
+          <Queue />
         </Route>
         <Route path="/race">
           <Users />

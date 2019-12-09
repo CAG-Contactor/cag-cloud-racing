@@ -1,5 +1,3 @@
-import * as React from "react"
-
 export interface LoginState {
     isLoggedIn: boolean;
     user: object;
