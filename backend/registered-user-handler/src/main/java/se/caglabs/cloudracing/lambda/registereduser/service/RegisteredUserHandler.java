@@ -52,7 +52,7 @@ public class RegisteredUserHandler {
             } else {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user races!");
             }
-        } else if(USER_LOGIN.equals(resource)) {
+        } else if(resource.equalsIgnoreCase(USER_LOGIN)) {
             if (POST.equals(request.getHttpMethod())) {
                 return service.userLogin(request);
             }
