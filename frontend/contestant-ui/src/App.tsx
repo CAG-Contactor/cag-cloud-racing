@@ -1,63 +1,92 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import React from 'react'
+import { useState } from 'react'
+import { Container, Row, Col } from 'react-bootstrap'
+
+import './App.css'
+import { HashRouter, Route, Link } from "react-router-dom"
+import { Navbar, Nav } from 'react-bootstrap'
+import Registration from './pages/registration'
+import SignIn from './pages/sign-in'
+import SignUp from './pages/sign-up'
+import { useSelector } from 'react-redux';
 
 
 const App: React.FC = () => {
+  const isLoggedIn = useSelector((state: any) => state.loginState.isLoggedIn)
+  console.log(useSelector((state: any) => state.loginState))
+
+  return !isLoggedIn ? <AppAuthenticated /> : <AppUnAuthenticated />
+}
+
+function AppUnAuthenticated() {
+  const [showSignUp, setShowSignUp] = useState(false)
+
   return (
-    <Router>
+    <Container style={{ textAlign: 'center' }}>
+      {showSignUp ?
+        <SignUp /> :
+        <SignIn />}
+
+      <Row className="justify-content-center">
+        <a href="#" onClick={() => setShowSignUp(!showSignUp)}>
+          Sign Up
+        </a>
+      </Row>
+
+    </Container>
+  )
+}
+
+function AppAuthenticated() {
+  return (
+    <HashRouter>
       <div>
-        <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="#home">Navbar</Navbar.Brand>
-          <Nav className="mr-auto">
-            <Nav.Link href="registration">Registration</Nav.Link>
-            <Nav.Link href="sign-in">Sign-in</Nav.Link>
-            <Nav.Link href="race">Race</Nav.Link>
-            <Nav.Link href="leaderboard">Leaderboard</Nav.Link>
-            <Nav.Link href="my-races">My Races</Nav.Link>
-          </Nav>
+        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="mr-auto">
+              <Link to='/' className="nav-link">Home</Link>
+              <Link to='/registration' className="nav-link">Registration</Link>
+              <Link to='/race' className="nav-link">Race</Link>
+              <Link to='/leaderboard' className="nav-link">Leaderboard</Link>
+              <Link to='/my-races' className="nav-link">My races</Link>
+            </Nav>
+          </Navbar.Collapse>
         </Navbar>
 
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
-        <Switch>
-          <Route path="/registration">
-            <About />
-          </Route>
-          <Route path="/sign-in">
-            <Users />
-          </Route>
-          <Route path="/race">
-            <Users />
-          </Route>
-          <Route path="/leaderboard">
-            <Users />
-          </Route>
-          <Route path="/my-races">
-            <Users />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
+
+        <Route path="/registration">
+          <Registration />
+        </Route>
+        <Route path="/race">
+          <Users />
+        </Route>
+        <Route path="/leaderboard">
+          <Users />
+        </Route>
+        <Route path="/my-races">
+          <Users />
+        </Route>
+        <Route exact path="/">
+          <Home />
+        </Route>
+
       </div>
-    </Router>
-  );
-
-  function Home() {
-    return <h2>Home</h2>;
-  }
-
-  function About() {
-    return <h2>About</h2>;
-  }
-
-  function Users() {
-    return <h2>Users</h2>;
-  }
+    </HashRouter>
+  )
 }
+
+function Home() {
+  return <h2>Home</h2>;
+}
+
+function About() {
+  return <h2>About</h2>;
+}
+
+function Users() {
+  return <h2>Users</h2>;
+}
+
 
 export default App;
