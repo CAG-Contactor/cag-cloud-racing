@@ -21,28 +21,37 @@ const styles = {
 const Queue = () => {
   const user = useSelector((state: any) => state.loginState.user)
   const [queue, setQueue] = useState([])
+  const [errorMsg, setErrorMsg] = useState("")
 
-  useEffect(() => {
+  const getRaceQueue = () => {
     API.getQueue().then((resp: any) => {
       setQueue(resp.data)
-    }).catch((e) => {
-
     })
+  }
+
+  useEffect(() => {
+    getRaceQueue()
   }, []);
 
   const addMeInQueue = () => {
     API.addMeInQueue({ name: user.userName }).then((resp) => {
-
-    }).catch((e) => {
-      console.log(e)
+      getRaceQueue()
+    }).catch((error) => {
+      if (error.response.status === 400) {
+        setErrorMsg("You are already in the Race Queue!")
+      }
     })
   }
 
   const bailOutFromQueue = () => {
+    console.log({ name: user.userName })
     API.bailOutFromQueue({ name: user.userName }).then((resp) => {
+      getRaceQueue()
 
-    }).catch((e) => {
-      console.log(e)
+    }).catch((error) => {
+      if (error.response.status === 404) {
+        setErrorMsg("You are not in the Race Queue")
+      }
     })
   }
 
@@ -53,6 +62,14 @@ const Queue = () => {
         <Button size={"lg"} onClick={addMeInQueue} variant="primary">Sign up for race</Button>
       </div>
     )
+  }
+
+  function AlreadyInQueueErrorMsg() {
+    return errorMsg && errorMsg ?
+      <div className="alert alert-danger mt-3" role="alert">
+        {errorMsg}
+      </div> :
+      null
   }
 
   function LeaveQueue() {
@@ -89,7 +106,10 @@ const Queue = () => {
     <Container style={{ textAlign: "center" }}>
       <h1>Queue</h1>
 
+      <AlreadyInQueueErrorMsg />
+
       <SignUpForRace />
+
       <LeaveQueue />
 
       <Queue />

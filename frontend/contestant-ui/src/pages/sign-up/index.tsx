@@ -4,10 +4,7 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux';
 import API from '../../BackendAPI'
 
-interface SignUpProps {
-}
-
-const SignUp: React.FC<SignUpProps> = (props) => {
+const SignUp = () => {
     const [username, setUsername] = useState()
     const [password, setPassword] = useState()
     const [password2, setPassword2] = useState()
@@ -51,7 +48,7 @@ const SignUp: React.FC<SignUpProps> = (props) => {
 
     return (
         <div>
-            <h1>Sign Up</h1>
+            <h1>Sign up</h1>
             <Form onSubmit={(e: any) => signUp(e)}>
                 <Form.Group>
                     <Row className="justify-content-center">
@@ -88,7 +85,7 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                             </InputGroup>
 
                             <button className="btn btn-lg btn-primary btn-block mb-3" type="submit">
-                                Sign Up
+                                Sign up
                             </button>
                             {
                                 errorMsg && errorMsg ?

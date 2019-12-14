@@ -4,13 +4,13 @@ import { Container, Row } from 'react-bootstrap'
 import './App.css'
 import { HashRouter, Route, Link } from "react-router-dom"
 import { Navbar, Nav } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
 import Queue from './pages/queue'
 import SignIn from './pages/sign-in'
 import SignUp from './pages/sign-up'
-import { useSelector } from 'react-redux';
+import Leaderboard from './pages/leaderboard'
 
-
-const App: React.FC = () => {
+const App = () => {
   const isLoggedIn = useSelector((state: any) => state.loginState.isLoggedIn)
 
   return isLoggedIn ? <AppAuthenticated /> : <AppUnAuthenticated />
@@ -27,7 +27,7 @@ function AppUnAuthenticated() {
 
       <Row className="justify-content-center">
         <a href="#" onClick={() => setShowSignUp(!showSignUp)}>
-          Sign Up
+          {showSignUp ? 'Sign in' : 'Sign up'}
         </a>
       </Row>
 
@@ -60,7 +60,7 @@ function AppAuthenticated() {
           <Users />
         </Route>
         <Route path="/leaderboard">
-          <Users />
+          <Leaderboard />
         </Route>
         <Route path="/my-races">
           <Users />
@@ -76,10 +76,6 @@ function AppAuthenticated() {
 
 function Home() {
   return <h2>Home</h2>;
-}
-
-function About() {
-  return <h2>About</h2>;
 }
 
 function Users() {
