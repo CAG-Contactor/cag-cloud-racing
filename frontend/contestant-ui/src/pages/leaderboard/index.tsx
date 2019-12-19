@@ -1,15 +1,10 @@
 import * as React from "react"
 import { Container } from 'react-bootstrap'
 import API from "../../BackendAPI"
-import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react'
 import Moment from 'react-moment';
 
-const styles = {
-}
-
 const Leaderboard = () => {
-    const user = useSelector((state: any) => state.loginState.user)
     const [leaderboard, setLeaderboard] = useState([])
 
     useEffect(() => {

@@ -47,7 +47,7 @@ public class RegisteredUserService {
             User user = mapper.readValue(body, User.class);
             user.setPassword(PasswordDigest.digest(user.getPassword()));
             getUserDao().saveUser(user);
-            return new APIGatewayProxyResponseEvent().withStatusCode(201).withBody(mapper.writeValueAsString(user));
+            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(user));
         } catch (JsonProcessingException e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad input values!");
         } catch (UserDaoException e) {
@@ -112,7 +112,7 @@ public class RegisteredUserService {
                     getSessionDao().saveSession(session);
                     return new APIGatewayProxyResponseEvent()
                             .withBody(mapper.writeValueAsString(session))
-                            .withStatusCode(201);
+                            .withStatusCode(200);
                 }
             }
             return new APIGatewayProxyResponseEvent().withStatusCode(401);
