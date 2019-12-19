@@ -32,7 +32,11 @@ const SignUp: React.FC<SignUpProps> = (props) => {
                     signInUser(data)
                 }
             }).catch((e: any) => {
-                setErrorMsg(`Something went wrong, failed with msg: ${e.message}`)
+                if (e.response.status === 409) {
+                    setErrorMsg("Account with that username already exists")
+                } else {
+                    setErrorMsg(`Something went wrong, failed with msg: ${e.message}`)
+                }
             })
         }
     }

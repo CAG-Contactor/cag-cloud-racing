@@ -4,10 +4,11 @@ import { Container, Row } from 'react-bootstrap'
 import './App.css'
 import { HashRouter, Route, Link } from "react-router-dom"
 import { Navbar, Nav } from 'react-bootstrap'
+import { useSelector } from 'react-redux';
 import Queue from './pages/queue'
 import SignIn from './pages/sign-in'
 import SignUp from './pages/sign-up'
-import { useSelector } from 'react-redux';
+import Leaderboard from './pages/leaderboard'
 
 
 const App: React.FC = () => {
@@ -45,7 +46,6 @@ function AppAuthenticated() {
             <Nav className="mr-auto">
               <Link to='/' className="nav-link">Home</Link>
               <Link to='/queue' className="nav-link">Queue</Link>
-              <Link to='/race' className="nav-link">Race</Link>
               <Link to='/leaderboard' className="nav-link">Leaderboard</Link>
               <Link to='/my-races' className="nav-link">My races</Link>
             </Nav>
@@ -56,11 +56,8 @@ function AppAuthenticated() {
         <Route path="/queue">
           <Queue />
         </Route>
-        <Route path="/race">
-          <Users />
-        </Route>
         <Route path="/leaderboard">
-          <Users />
+          <Leaderboard />
         </Route>
         <Route path="/my-races">
           <Users />

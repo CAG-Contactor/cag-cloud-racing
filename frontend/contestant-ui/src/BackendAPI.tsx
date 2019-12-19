@@ -8,7 +8,9 @@ const API = {
 
     addMeInQueue: (body: any) => axios.post(`${env}/race-queue`, body),
     getQueue: () => axios.get(`${env}/race-queue`),
-    bailOutFromQueue: (body: any) => axios.delete(`${env}/race-queue`, body)
+    bailOutFromQueue: (body: any) => axios.delete(`${env}/race-queue`, body),
+
+    getLeaderboard: () => axios.get(`${env}/leader-board`)
 }
 
 export default API
