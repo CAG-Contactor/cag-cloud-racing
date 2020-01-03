@@ -41,4 +41,9 @@ public class SessionDaoImpl implements SessionDao {
     public void saveSession(Session session) {
         this.mapper.save(session);
     }
+
+    @Override
+    public void deleteSession(Session session) {
+        this.mapper.delete(session);
+    }
 }

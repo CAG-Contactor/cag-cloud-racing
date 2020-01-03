@@ -25,6 +25,7 @@ import static java.util.Objects.isNull;
 @Slf4j
 public class RegisteredUserService {
     private static final String NAME = "name";
+    private static final String SESSION_TOKEN = "sessionToken";
     private UserDao userDao;
     private RaceDao raceDao;
     private SessionDao sessionDao;
@@ -102,13 +103,11 @@ public class RegisteredUserService {
             if (getUserDao().userExist(userRequest.getName())) {
                 // Read user and check user password
                 User user = getUserDao().getUser(userRequest.getName());
-                log.info("user: " + user);
                 boolean userPasswordIsOk = PasswordDigest.digest(userRequest.getPassword())
                         .equals(user.getPassword());
                 if (userPasswordIsOk) {
                     // Create and return session
-                    Session session = Session.of(UUID.randomUUID().toString(), user.getName());
-                    log.info("Session: " + session);
+                    Session session = new Session(UUID.randomUUID().toString(), user.getName());
                     getSessionDao().saveSession(session);
                     return new APIGatewayProxyResponseEvent()
                             .withBody(mapper.writeValueAsString(session))
@@ -120,6 +119,21 @@ public class RegisteredUserService {
             e.printStackTrace();
             return new APIGatewayProxyResponseEvent().withStatusCode(500);
         }
+    }
+
+    /**
+     * Logout user
+     * @param request is passed
+     * @return the response
+     */
+    APIGatewayProxyResponseEvent userLogout(APIGatewayProxyRequestEvent request) {
+        log.error("DELETE USER SESSION");
+        log.error("PRE SESSION: "+request.getPathParameters().get(SESSION_TOKEN));
+        Session session = getSessionDao().findSessionByToken(request.getPathParameters().get(SESSION_TOKEN));
+        log.error("POST SESSION: "+session.toString());
+        getSessionDao().deleteSession(session);
+        log.error("SESSION REMOVED FROM DATABASE: "+session.toString());
+        return new APIGatewayProxyResponseEvent().withBody("Session deleted!").withStatusCode(200);
     }
 
     private RaceDao getRaceDao() {

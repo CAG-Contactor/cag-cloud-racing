@@ -216,6 +216,13 @@ Resources:
             Method: POST
             RestApiId:
               Ref: ClientRestApi
+        DeleteUserLogin:
+          Type: Api
+          Properties:
+            Path: /user-login/{sessionToken}
+            Method: DELETE
+            RestApiId:
+              Ref: ClientRestApi
 
   RaceQueueFunction:
     Type: AWS::Serverless::Function

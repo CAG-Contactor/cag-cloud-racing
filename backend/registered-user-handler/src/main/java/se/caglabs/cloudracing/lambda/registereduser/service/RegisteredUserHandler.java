@@ -14,6 +14,7 @@ public class RegisteredUserHandler {
     private static final String REGISTER_USERS = "/registered-users";
     private static final String RACE = "/registered-user/{name}/race";
     private static final String USER_LOGIN = "/user-login";
+    private static final String USER_LOGOUT = "/user-login/{sessionToken}";
     private static final String POST = "POST";
     private static final String GET = "GET";
     private static final String DELETE = "DELETE";
@@ -52,9 +53,11 @@ public class RegisteredUserHandler {
             } else {
                 return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user races!");
             }
-        } else if(resource.equalsIgnoreCase(USER_LOGIN)) {
+        } else if(resource.equalsIgnoreCase(USER_LOGIN) || resource.equalsIgnoreCase(USER_LOGOUT)) {
             if (POST.equals(request.getHttpMethod())) {
                 return service.userLogin(request);
+            } else if (DELETE.equals(request.getHttpMethod())) {
+                return service.userLogout(request);
             }
             return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for login user!");
         }

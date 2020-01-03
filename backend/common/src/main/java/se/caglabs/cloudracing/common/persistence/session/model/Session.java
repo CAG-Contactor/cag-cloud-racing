@@ -7,12 +7,18 @@ import lombok.Data;
 import lombok.NonNull;
 
 @DynamoDBTable(tableName="sessions-STAGE")
-@Data(staticConstructor = "of")
+@Data
 public class Session {
     @DynamoDBHashKey(attributeName = "token")
-    @NonNull
     private String token;
     @DynamoDBAttribute(attributeName = "name")
-    @NonNull
     private String userName;
+
+    public Session() {
+    }
+
+    public Session(String token, String userName) {
+        this.token = token;
+        this.userName = userName;
+    }
 }
