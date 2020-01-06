@@ -1,0 +1,22 @@
+mat-card {
+  margin: .5rem;
+  padding: 6px;
+  display: flex;
+  mat-card-header {
+    flex-grow: 1;
+    align-items: center;
+    mat-card-title {
+      margin-bottom: 10px;
+    }
+    mat-card-subtitle {
+      margin-bottom: 0;
+    }
+  }
+  mat-card-actions {
+    flex-grow: 0;
+    padding: 8px;
+  }
+
+
+}
+
