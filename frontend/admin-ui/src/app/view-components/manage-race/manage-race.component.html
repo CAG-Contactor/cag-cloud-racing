@@ -1,1 +1,11 @@
-<p>manage-race works!</p>
+<div>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Status</mat-card-title>
+      <mat-card-subtitle>{{raceStatus}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions>
+      <button mat-button [disabled]="!raceIsIdle" (click)="armRace()">Aktivera lopp</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

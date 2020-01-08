@@ -10,7 +10,6 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
 import { RouterModule } from '@angular/router'
 import { ManageUsersComponent } from './manage-users/manage-users.component'
-import { DashboardComponent } from './dashboard/dashboard.component'
 import { ManageRaceComponent } from './manage-race/manage-race.component'
 import { CommonServicesModule } from '../common-services/common-services.module'
 import { AppRoutingModule } from '../app-routing/app-routing.module'
@@ -21,7 +20,6 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
   declarations: [
     MainNavComponent,
     ManageUsersComponent,
-    DashboardComponent,
     ManageRaceComponent,
     ConfirmationDialogComponent
   ],
