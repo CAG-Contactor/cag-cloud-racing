@@ -8,7 +8,7 @@ import { mergeMap } from 'rxjs/operators'
   styleUrls: ['./manage-race.component.scss']
 })
 export class ManageRaceComponent implements OnInit {
-  private raceStatus: string
+  raceStatus: string
 
   constructor(private readonly backendService: BackendService) {
   }
