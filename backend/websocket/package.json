@@ -1,0 +1,15 @@
+{
+  "name": "websocket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "DisConnect.js",
+  "dependencies": {
+    "aws-sdk": "^2.601.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
