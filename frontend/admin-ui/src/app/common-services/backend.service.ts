@@ -4,21 +4,24 @@ import { Observable, of as observableOf } from 'rxjs'
 import { User } from '../domain/user.model'
 import { filter, map, range } from 'lodash'
 import * as faker from 'faker'
+import {ApiService} from "../api.service";
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class BackendService {
-  private users = map(range(100), n => ({name: faker.name.firstName(), type: faker.random.number(10) % 0 === 0 ? 'ADMIN' : 'CONTESTANT'}))
+  //private users = map(range(10), n => ({name: faker.name.firstName(), password:  'xxxx', type: faker.random.number(10) % 0 === 0 ? 'ADMIN' : 'CONTESTANT'}))
+  private users = []
 
   private raceState: string = 'IDLE'
 
-  constructor(private readonly httpClient: HttpClient) {
-  }
+  constructor(private apiService: ApiService) { }
+
+ // constructor(private readonly httpClient: HttpClient) {}
 
   fetchRegisteredUsers(): Observable<User[]> {
-    console.log('fetch users:', this.users)
-    return observableOf(this.users)
+    return this.apiService.getUsers();
   }
 
   deleteUser(name: string): Observable<void> {
