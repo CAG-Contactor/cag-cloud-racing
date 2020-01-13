@@ -9,10 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDao;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDaoImpl;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
+import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.singletonMap;
 
 @Slf4j
 public class LeaderBoardHandler {
@@ -24,7 +27,9 @@ public class LeaderBoardHandler {
                     .filter(r -> r.getRaceStatus() == Race.RaceStatus.FINISHED)
                     .sorted(Comparator.comparingLong(Race::getFinishTime))
                     .collect(Collectors.toList());
-            return new APIGatewayProxyResponseEvent().withBody(new ObjectMapper().writeValueAsString(races));
+            return new APIGatewayProxyResponseEvent()
+              .withHeaders(new CorsHeaders())
+              .withBody(new ObjectMapper().writeValueAsString(races));
         } catch (JsonProcessingException e) {
             return new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("Error mapping object to json string");
         }
