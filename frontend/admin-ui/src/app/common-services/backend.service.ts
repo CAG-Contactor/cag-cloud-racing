@@ -21,15 +21,7 @@ export class BackendService {
  // constructor(private readonly httpClient: HttpClient) {}
 
   fetchRegisteredUsers(): Observable<User[]> {
-    console.log('fetch users:', this.users)
-    this.apiService.getUsers().subscribe((data: User[])=>{
-      console.log(data);
-      this.users = data;
-    })
-
-    console.log('fetched users:', this.users)
-
-    return observableOf(this.users)
+    return this.apiService.getUsers();
   }
 
   deleteUser(name: string): Observable<void> {

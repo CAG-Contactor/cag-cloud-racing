@@ -9,12 +9,18 @@ import {User} from "./domain/user.model";
 })
 export class ApiService {
 
-  private SERVER_URL = "https://dqgo8v372l.execute-api.eu-central-1.amazonaws.com/cchehu/registered-users";
+  private SERVER_URL = "https://dqgo8v372l.execute-api.eu-central-1.amazonaws.com/cchehu/";
+  private REG_USERS = "registered-users"
+  private RACE_QUEUE = "race-queue"
 
   constructor(private httpClient: HttpClient) { }
 
-  public getUsers() {
-    return this.httpClient.get(this.SERVER_URL);
+  public getUsers(): Observable<User[]> {
+    return this.httpClient.get<User[]>(this.SERVER_URL + this.REG_USERS);
+  }
+
+  public getRaces(): Observable<User[]> {
+    return this.httpClient.get<User[]>(this.SERVER_URL + this.REG_USERS);
   }
 
 }
