@@ -31,7 +31,7 @@ public class LeaderBoardHandler {
               .withHeaders(new CorsHeaders())
               .withBody(new ObjectMapper().writeValueAsString(races));
         } catch (JsonProcessingException e) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("Error mapping object to json string");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(500).withBody("Error mapping object to json string");
         }
     }
 

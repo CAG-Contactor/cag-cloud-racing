@@ -14,6 +14,7 @@ import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDaoImpl;
 import se.caglabs.cloudracing.common.persistence.racequeue.model.RaceQueue;
 import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
 import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDaoImpl;
+import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
 import java.util.Optional;
 
@@ -38,9 +39,9 @@ public class RaceQueueService {
             json = mapper.writeValueAsString(raceQueueDao.getRaceQueue());
 
         } catch (JsonProcessingException e) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Failed to convert value to json");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("Failed to convert value to json");
         }
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(json);
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody(json);
     }
 
     APIGatewayProxyResponseEvent bailOut(APIGatewayProxyRequestEvent request) {
@@ -50,7 +51,7 @@ public class RaceQueueService {
         try {
             userDTO = mapper.readValue(body, UserDTO.class);
         } catch (JsonProcessingException | IllegalArgumentException e) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("name required to bail out of race");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("name required to bail out of race");
         }
 
         Optional<Race> raceToBailOut = raceDao.findIdleByUserName(userDTO.getName());
@@ -60,10 +61,10 @@ public class RaceQueueService {
             raceDao.saveRace(race);
             raceQueueDao.removeFromQueue(race.getId());
 
-            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("User bailed out: " +
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody("User bailed out: " +
                     userDTO.getName());
         } else {
-            return new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("Race for user: " +
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(404).withBody("Race for user: " +
                     userDTO.getName() + " with state IDLE not found");
         }
     }
@@ -75,18 +76,18 @@ public class RaceQueueService {
             user = mapper.readValue(body, UserDTO.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("User name needed to add a race");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("User name needed to add a race");
         }
         if (!userDao.userExist(user.getName())) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("User with name " +
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("User with name " +
                     user.getName() + " not registered");
         }
         if (raceQueueDao.raceExist(user.getName())) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Race already exist for user " +
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("Race already exist for user " +
                     user.getName());
         }
         saveRace(Race.builder().userName(user.getName()).build());
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("Race added for user " + user.getName());
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody("Race added for user " + user.getName());
     }
 
     private void saveRace(Race race) {

@@ -9,6 +9,7 @@ import se.caglabs.cloudracing.common.persistence.currentrace.model.CurrentRace;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDao;
 import se.caglabs.cloudracing.common.persistence.race.dao.RaceDaoImpl;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
+import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
 import java.util.Optional;
 
@@ -142,7 +143,7 @@ public class GatePassedHandler {
     }
 
     private APIGatewayProxyResponseEvent response(int statusCode, String message) {
-        return new APIGatewayProxyResponseEvent().withStatusCode(statusCode).withBody(message);
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(statusCode).withBody(message);
     }
 
     private boolean isNullOrZero(Long value) {

@@ -16,6 +16,7 @@ import se.caglabs.cloudracing.common.persistence.registereduser.model.User;
 import se.caglabs.cloudracing.common.persistence.session.dao.SessionDao;
 import se.caglabs.cloudracing.common.persistence.session.dao.SessionDaoImpl;
 import se.caglabs.cloudracing.common.persistence.session.model.Session;
+import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,11 +49,11 @@ public class RegisteredUserService {
             User user = mapper.readValue(body, User.class);
             user.setPassword(PasswordDigest.digest(user.getPassword()));
             getUserDao().saveUser(user);
-            return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(user));
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody(mapper.writeValueAsString(user));
         } catch (JsonProcessingException e) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad input values!");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("Bad input values!");
         } catch (UserDaoException e) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("User already exists!");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(409).withBody("User already exists!");
         }
     }
 
@@ -61,7 +62,7 @@ public class RegisteredUserService {
      */
     APIGatewayProxyResponseEvent getRegisteredUser(APIGatewayProxyRequestEvent request) throws JsonProcessingException {
         User user = getUserDao().getUser(request.getPathParameters().get(NAME));
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(user));
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody(mapper.writeValueAsString(user));
     }
 
     /**
@@ -70,7 +71,7 @@ public class RegisteredUserService {
     APIGatewayProxyResponseEvent deleteRegisteredUser(APIGatewayProxyRequestEvent request) {
         User user = getUserDao().getUser(request.getPathParameters().get(NAME));
         getUserDao().deleteUser(user);
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody("User deleted!");
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody("User deleted!");
     }
 
     /**
@@ -78,7 +79,7 @@ public class RegisteredUserService {
      */
      APIGatewayProxyResponseEvent getRegisteredUsers() throws JsonProcessingException {
         List users = getUserDao().listUsers();
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(users));
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody(mapper.writeValueAsString(users));
     }
 
     /**
@@ -88,7 +89,7 @@ public class RegisteredUserService {
         User user = getUserDao().getUser(request.getPathParameters().get(NAME));
         List<Race> races = getRaceDao().findAllByUserName(user.getName());
 
-        return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(races));
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody(mapper.writeValueAsString(races));
     }
 
     /**
@@ -111,13 +112,14 @@ public class RegisteredUserService {
                     getSessionDao().saveSession(session);
                     return new APIGatewayProxyResponseEvent()
                             .withBody(mapper.writeValueAsString(session))
+                            .withHeaders(new CorsHeaders())
                             .withStatusCode(200);
                 }
             }
-            return new APIGatewayProxyResponseEvent().withStatusCode(401);
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(401);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return new APIGatewayProxyResponseEvent().withStatusCode(500);
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(500);
         }
     }
 
@@ -133,7 +135,7 @@ public class RegisteredUserService {
         log.error("POST SESSION: "+session.toString());
         getSessionDao().deleteSession(session);
         log.error("SESSION REMOVED FROM DATABASE: "+session.toString());
-        return new APIGatewayProxyResponseEvent().withBody("Session deleted!").withStatusCode(200);
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withBody("Session deleted!").withStatusCode(200);
     }
 
     private RaceDao getRaceDao() {

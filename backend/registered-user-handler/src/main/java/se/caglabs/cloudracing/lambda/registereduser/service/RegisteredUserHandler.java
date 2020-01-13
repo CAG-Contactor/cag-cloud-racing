@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
 @Slf4j
 public class RegisteredUserHandler {
@@ -40,18 +41,18 @@ public class RegisteredUserHandler {
                 case DELETE:
                     return service.deleteRegisteredUser(request);
                 default:
-                    return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user!");
+                    return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("Bad request for user!");
             }
         } else if (resource.equalsIgnoreCase(REGISTER_USERS)) {
             if (GET.equals(request.getHttpMethod())) {
                 return service.getRegisteredUsers();
             }
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for registered users!");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("Bad request for registered users!");
         } else if (resource.equalsIgnoreCase(RACE)) {
             if (GET.equals(request.getHttpMethod())) {
                 return service.getUserRace(request);
             } else {
-                return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for user races!");
+                return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("Bad request for user races!");
             }
         } else if(resource.equalsIgnoreCase(USER_LOGIN) || resource.equalsIgnoreCase(USER_LOGOUT)) {
             if (POST.equals(request.getHttpMethod())) {
@@ -59,9 +60,9 @@ public class RegisteredUserHandler {
             } else if (DELETE.equals(request.getHttpMethod())) {
                 return service.userLogout(request);
             }
-            return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request for login user!");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("Bad request for login user!");
         }
 
-        return new APIGatewayProxyResponseEvent().withStatusCode(400).withBody("Bad request!");
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(400).withBody("Bad request!");
     }
 }

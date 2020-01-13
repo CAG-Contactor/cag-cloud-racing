@@ -14,6 +14,7 @@ import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDao;
 import se.caglabs.cloudracing.common.persistence.racequeue.dao.RaceQueueDaoImpl;
 import se.caglabs.cloudracing.common.persistence.racequeue.model.RaceQueue;
+import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
 import java.util.Optional;
 
@@ -38,23 +39,23 @@ public class CurrentRaceService {
                 .getCurrentRace()
                 .orElse(null);
         if (currentRace != null) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("There is already a current race present");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(409).withBody("There is already a current race present");
         }
         RaceQueue nextRace = raceQueueDao
                 .getNextRace()
                 .orElse(null);
         if (nextRace == null) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("There is no pending race");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(409).withBody("There is no pending race");
         }
         Race race = raceDao.findById(nextRace.getRaceId()).orElse(null);
         if (race == null) {
-            return new APIGatewayProxyResponseEvent().withStatusCode(409).withBody("Could not find the race object");
+            return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(409).withBody("Could not find the race object");
         }
         raceQueueDao.remove(race);
         race.setRaceStatus(Race.RaceStatus.ARMED);
         raceDao.saveRace(race);
         currentRaceDao.saveCurrentRace(new CurrentRace(nextRace.getRaceId()));
-        return new APIGatewayProxyResponseEvent().withStatusCode(201).withBody(mapper.writeValueAsString(race));
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(201).withBody(mapper.writeValueAsString(race));
     }
 
     APIGatewayProxyResponseEvent abortActiveRace(APIGatewayProxyRequestEvent request) {
@@ -69,9 +70,9 @@ public class CurrentRaceService {
                 r.setRaceStatus(Race.RaceStatus.ABORTED);
                 raceDao.saveRace(r);
                 currentRaceDao.deleteCurrentRace();
-                return new APIGatewayProxyResponseEvent().withStatusCode(201).withBody("OK");
-            }).orElse(new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("Race could not be found"));
-        }).orElse(new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("No ongoing race could be found"));
+                return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(201).withBody("OK");
+            }).orElse(new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(404).withBody("Race could not be found"));
+        }).orElse(new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(404).withBody("No ongoing race could be found"));
     }
 
     public APIGatewayProxyResponseEvent getCurrentRace() {
@@ -80,12 +81,12 @@ public class CurrentRaceService {
             Optional<Race> race = raceDao.findById(currentRace.get().getRaceId());
             if (race.isPresent()) {
                 try {
-                    return new APIGatewayProxyResponseEvent().withStatusCode(200).withBody(mapper.writeValueAsString(race.get()));
+                    return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody(mapper.writeValueAsString(race.get()));
                 } catch (JsonProcessingException e) {
-                    return new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("Unexpected error mapping result");
+                    return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(500).withBody("Unexpected error mapping result");
                 }
             }
         }
-        return new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("No ongoing race could be found");
+        return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(404).withBody("No ongoing race could be found");
     }
 }

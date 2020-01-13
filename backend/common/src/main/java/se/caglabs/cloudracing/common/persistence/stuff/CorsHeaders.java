@@ -13,6 +13,6 @@ import java.util.HashMap;
 public class CorsHeaders extends HashMap<String, String> {
   {
     put("Access-Control-Allow-Origin", "*");
-    put("Access-Control-Allow-Methods", "GET,OPTIONS");
+    put("Access-Control-Allow-Methods", "*");
   }
 }
