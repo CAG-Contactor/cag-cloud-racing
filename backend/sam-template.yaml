@@ -404,7 +404,8 @@ Resources:
   RaceWebSocket:
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      Name: RaceWebSocket-${StageName}
+      Name:
+        Fn::Sub: race-websocket-${StageName}
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: "$request.body.message"
   ConnectRoute:

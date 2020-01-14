@@ -21,7 +21,7 @@ const SignUp = () => {
             const data = JSON.stringify({
                 name: username,
                 password: password,
-                type: "blahonga"
+                type: "CONTESTANT"
             })
 
             API.signUp(data).then((resp: any) => {

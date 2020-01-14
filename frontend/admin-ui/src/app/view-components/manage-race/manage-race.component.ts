@@ -9,24 +9,34 @@ import { mergeMap } from 'rxjs/operators'
 })
 export class ManageRaceComponent implements OnInit {
   raceStatus: string
+  loading = true
 
   constructor(private readonly backendService: BackendService) {
   }
 
   ngOnInit() {
+
     this.backendService.fetchRaceState()
-      .subscribe(status => this.raceStatus = status)
+      .subscribe(status => {
+        this.raceStatus = status
+        this.loading = false
+      })
   }
 
-  get raceIsIdle() {
-    return this.raceStatus === 'IDLE'
+  get raceIsActive() {
+    return this.raceStatus === 'ARMED'
+      || this.raceStatus === 'STARTED'
   }
 
   armRace() {
+    this.loading = true
     this.backendService.armRace()
       .pipe(
         mergeMap(() => this.backendService.fetchRaceState())
       )
-      .subscribe(status => this.raceStatus = status)
+      .subscribe(status => {
+        this.raceStatus = status
+        this.loading = false
+      })
   }
 }
