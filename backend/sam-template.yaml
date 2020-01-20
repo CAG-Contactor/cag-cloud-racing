@@ -20,6 +20,7 @@ Parameters:
     Default: dev
     Description: The stage for the stack (identifies all resources)
 
+
 Resources:
 # DO NOT USE THIS FOR NOW, SINCE IT SURPASSES THE GRAPHQLAPI LIMIT.
 #  AppSync section
@@ -400,142 +401,234 @@ Resources:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
 
-
-
-
-
   RaceWebSocket:
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      Name: RaceWebSocket
+      Name:
+        Fn::Sub: race-websocket-${StageName}
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: "$request.body.message"
-    ConnectRoute:
-      Type: AWS::ApiGatewayV2::Route
-      Properties:
-        ApiId: !Ref RaceWebSocket
-        RouteKey: $connect
-        AuthorizationType: NONE
-        OperationName: ConnectRoute
-        Target: !Join
-          - '/'
-          - - 'integrations'
-            - !Ref ConnectInteg
-    ConnectInteg:
-      Type: AWS::ApiGatewayV2::Integration
-      Properties:
-        ApiId: !Ref RaceWebSocket
-        Description: Connect Integration
-        IntegrationType: AWS_PROXY
-        IntegrationUri:
-          Fn::Sub:
-            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnConnectFunction.Arn}/invocations
-    DisconnectRoute:
-      Type: AWS::ApiGatewayV2::Route
-      Properties:
-        ApiId: !Ref RaceWebSocket
-        RouteKey: $disconnect
-        AuthorizationType: NONE
-        OperationName: DisconnectRoute
-        Target: !Join
-          - '/'
-          - - 'integrations'
-            - !Ref DisconnectInteg
-    DisconnectInteg:
-      Type: AWS::ApiGatewayV2::Integration
-      Properties:
-        ApiId: !Ref RaceWebSocket
-        Description: Disconnect Integration
-        IntegrationType: AWS_PROXY
-        IntegrationUri:
-          Fn::Sub:
-            arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnDisconnectFunction.Arn}/invocations
-   Deployment:
-      Type: AWS::ApiGatewayV2::Deployment
-      DependsOn:
-        - ConnectRoute
-        - DisconnectRoute
-      Properties:
-        ApiId: !Ref RaceWebSocket
-    Stage:
-      Type: AWS::ApiGatewayV2::Stage
-      Properties:
-        StageName: !Ref StageName
-        Description: Prod Stage
-        DeploymentId: !Ref Deployment
-        ApiId: !Ref RaceWebSocket
-    ConnectionsTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        AttributeDefinitions:
-          - AttributeName: "connectionId"
-            AttributeType: "S"
-        KeySchema:
-          - AttributeName: "connectionId"
-            KeyType: "HASH"
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-        SSESpecification:
-          SSEEnabled: True
-        TableName: !Ref TableName
-    OnConnectFunction:
-      Type: AWS::Serverless::Function
-      Properties:
-        CodeUri: websocket/
-        Handler: OnConnect.handler
-        MemorySize: 256
-        Runtime: nodejs12.x
-        Environment:
-          Variables:
-            TABLE_NAME: !Ref TableName
-        Policies:
-          - DynamoDBCrudPolicy:
-              TableName: !Ref TableName
-    OnConnectPermission:
-      Type: AWS::Lambda::Permission
-      DependsOn:
-        - RaceWebSocket
-        - OnConnectFunction
-      Properties:
-        Action: lambda:InvokeFunction
-        FunctionName: !Ref OnConnectFunction
-        Principal: apigateway.amazonaws.com
-    OnDisconnectFunction:
-      Type: AWS::Serverless::Function
-      Properties:
-        CodeUri: websocket/
-        Handler: DisConnect.handler
-        MemorySize: 256
-        Runtime: nodejs12.x
-        Environment:
-          Variables:
-            TABLE_NAME: !Ref TableName
-        Policies:
-          - DynamoDBCrudPolicy:
-              TableName: !Ref TableName
-    OnDisconnectPermission:
-      Type: AWS::Lambda::Permission
-      DependsOn:
-        - RaceWebSocket
-        - OnDisconnectFunction
-      Properties:
-        Action: lambda:InvokeFunction
-        FunctionName: !Ref OnDisconnectFunction
-        Principal: apigateway.amazonaws.com
-  Outputs:
-    ConnectionsTableArn:
-      Description: "Connections table ARN"
-      Value: !GetAtt ConnectionsTable.Arn
-  
-    OnConnectFunctionArn:
-      Description: "OnConnect function ARN"
-      Value: !GetAtt OnConnectFunction.Arn
-  
-    OnDisconnectFunctionArn:
-      Description: "OnDisconnect function ARN"
-      Value: !GetAtt OnDisconnectFunction.Arn
-  
-    WebSocketURI:
-      Description: "The WSS Protocol URI to connect to"
-      Value: !Join [ '', [ 'wss://', !Ref RaceWebSocket, '.execute-api.',!Ref 'AWS::Region','.amazonaws.com/',!Ref 'Stage'] ]
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref RaceWebSocket
+      RouteKey: $connect
+      AuthorizationType: NONE
+      OperationName: ConnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref ConnectInteg
+  ConnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref RaceWebSocket
+      Description: Connect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnConnectFunction.Arn}/invocations
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref RaceWebSocket
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      OperationName: DisconnectRoute
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref DisconnectInteg
+  DisconnectInteg:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref RaceWebSocket
+      Description: Disconnect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${OnDisconnectFunction.Arn}/invocations
+  Deployment:
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn:
+      - ConnectRoute
+      - DisconnectRoute
+    Properties:
+      ApiId: !Ref RaceWebSocket
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: !Ref StageName
+      Description: Prod Stage
+      DeploymentId: !Ref Deployment
+      ApiId: !Ref RaceWebSocket
+
+  EchoFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: >
+          exports.handler = function(event, context, callback) {
+            console.log("Receiving event from database");
+          console.log(event);
+          console.log(context);
+           callback(null,"done");
+          };
+      Handler: index.handler
+      Role:
+        Fn::GetAtt: [ LambdaRole , Arn ]
+      Runtime: nodejs12.x
+      Timeout: 300
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: LambdaRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - dynamodb:DescribeStream
+                  - dynamodb:GetRecords
+                  - dynamodb:GetShardIterator
+                  - dynamodb:ListStreams
+                Resource: "*"
+  ConnectionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "connectionId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "connectionId"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: True
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+      TableName:
+        Fn::Sub: websocket-connections-${StageName}
+
+  DataTableStream:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      Enabled: True
+      EventSourceArn:
+        Fn::GetAtt: [ ConnectionsTable , StreamArn ]
+      FunctionName:
+        Fn::GetAtt: [ EchoFunction , Arn ]
+      StartingPosition: LATEST
+
+  OnConnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: websocket/
+      Handler: OnConnect.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ConnectionsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: ConnectionsTable
+  OnConnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - RaceWebSocket
+      - OnConnectFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnConnectFunction
+      Principal: apigateway.amazonaws.com
+  OnDisconnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: websocket/
+      Handler: DisConnect.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ConnectionsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: ConnectionsTable
+  OnDisconnectPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - RaceWebSocket
+      - OnDisconnectFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnDisconnectFunction
+      Principal: apigateway.amazonaws.com
+  OnRaceChangeEventFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: websocket/
+      Handler: OnRaceChangeEvent.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          WEB_SOCKET_CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+          RACES_TABLE_NAME: !Ref RacesTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: ConnectionsTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
+
+  OnRaceChangeEventPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - RaceWebSocket
+      - OnRaceChangeEventFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnRaceChangeEventFunction
+      Principal: apigateway.amazonaws.com
+
+Outputs:
+  ConnectionsTableArn:
+    Description: "Connections table ARN"
+    Value: !GetAtt ConnectionsTable.Arn
+
+  OnConnectFunctionArn:
+    Description: "OnConnect function ARN"
+    Value: !GetAtt OnConnectFunction.Arn
+
+  OnDisconnectFunctionArn:
+    Description: "OnDisconnect function ARN"
+    Value: !GetAtt OnDisconnectFunction.Arn
+
+  WebSocketURI:
+    Description: "The WSS Protocol URI to connect to"
+    Value: !Join [ '', [ 'wss://', !Ref RaceWebSocket, '.execute-api.',!Ref 'AWS::Region','.amazonaws.com/',!Ref 'Stage'] ]

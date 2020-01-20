@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const env = "https://j6fq9dc1mh.execute-api.eu-central-1.amazonaws.com/ccgaoz"
+const env = process.env.REACT_APP_API_ENDPOINT || "https://j6fq9dc1mh.execute-api.eu-central-1.amazonaws.com/ccgaoz"
+console.log('API_ENDPOINT', env)
 
 const API = {
     signUp: (body: any) => axios.post(`${env}/registered-user`, body),

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { BackendService } from '../../common-services/backend.service'
 import { User } from '../../domain/user.model'
-import { mergeMap } from 'rxjs/operators'
+import { mergeMap, tap } from 'rxjs/operators'
 import { Observable, of as observableOf } from 'rxjs'
 import { MatDialog } from '@angular/material/dialog'
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component'
@@ -13,6 +13,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 })
 export class ManageUsersComponent implements OnInit {
   users$: Observable<User[]>
+  loading = true;
 
   constructor(
     private readonly backend: BackendService,
@@ -21,7 +22,7 @@ export class ManageUsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.users$ = this.backend.fetchRegisteredUsers()
+    this.users$ = this.getUsers()
   }
 
   iconFor(user: User) {
@@ -47,6 +48,13 @@ export class ManageUsersComponent implements OnInit {
           return doRemove ? this.backend.deleteUser(user.name) : observableOf(undefined)
         }),
       )
-      .subscribe(users => this.users$ = this.backend.fetchRegisteredUsers())
+      .subscribe(() => this.getUsers())
+  }
+
+  private getUsers() {
+    this.loading = true
+    return this.users$ = this.backend.fetchRegisteredUsers().pipe(
+      tap(() => this.loading = false)
+    )
   }
 }

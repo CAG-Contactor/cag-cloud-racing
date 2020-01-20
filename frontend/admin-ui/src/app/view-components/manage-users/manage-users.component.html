@@ -12,5 +12,6 @@
   </mat-card>
 </div>
 <ng-template #noUsers>
-  <div>No users</div>
+  <i *ngIf="loading">Laddar användare...</i>
+  <div *ngIf="!loading">No users</div>
 </ng-template>

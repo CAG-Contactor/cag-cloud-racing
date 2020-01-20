@@ -1,27 +1,45 @@
 # AdminUi
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.19.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Build for production:
 
-## Running unit tests
+    $ npm run build:prod
+    
+This configures the application to access the 
+- API gateway at `https://backend.jfokus.caglabs.se`    
+- web socket at `wss://websocket.jfokus.caglabs.se`    
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Build for test:
 
-## Running end-to-end tests
+    $ npm run build:test
+    
+This configures the application to access the
+- API gateway at `https://test.backend.jfokus.caglabs.se`    
+- web socket gateway at `wss://test.websocket.jfokus.caglabs.se`    
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+For local development where backend is your own AWS stack, 
+start dev server for a user specific backend:
 
-## Further help
+    $ export API_ENDPOINT=<your API server>
+    $ export WS_ENDPOINT=<your web socket server>
+    $ npm run start:local-env
+    
+This configures the application to access the 
+- API gateway at `<your API server>`.    
+- web socket at `<your web socket server>`.    
+    
+The name of the API gateway you find under in the AWS web page under Services and 
+API Gateway and the API with name "cloud-racing-api-<domain>", where the domain 
+is yours. 
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Then you select "Stages" in the list to the left and then you select your domain 
+name under "Stages". Click on any message under "current-race" and the API endpoint 
+is shown under as "Invoke URL". 
+
+The name of the Web Socket server is found in a similar way by browsing to the end 
+of the API list and look for an API with name "race-websocket-<domain>".  
+
+Select your API and "Stages" in the left list and your domain in a similar way 
+as described above. The  Web socket server is shown as: "WebSocket URL"
+

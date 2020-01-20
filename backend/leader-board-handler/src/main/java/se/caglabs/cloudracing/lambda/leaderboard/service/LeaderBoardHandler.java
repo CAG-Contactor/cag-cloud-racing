@@ -15,8 +15,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.Collections.singletonMap;
-
 @Slf4j
 public class LeaderBoardHandler {
     private RaceDao raceDao;
