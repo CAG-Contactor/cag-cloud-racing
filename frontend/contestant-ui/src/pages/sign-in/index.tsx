@@ -15,7 +15,7 @@ const SignIn = () => {
         const data = JSON.stringify({
             name: username,
             password: password,
-            type: "blahonga"
+            type: "CONTESTANT"
         })
 
         API.signIn(data).then((resp: any) => {
