@@ -366,16 +366,23 @@ Resources:
         WriteCapacityUnits: 1
 
   RacesTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: AWS::DynamoDB::Table
     Properties:
       TableName:
         Fn::Sub: races-${StageName}
-      PrimaryKey:
-        Name: id
-        Type: String
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
+      SSESpecification:
+        SSEEnabled: True
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
 
   SessionsTable:
     Type: AWS::Serverless::SimpleTable
@@ -463,22 +470,36 @@ Resources:
       DeploymentId: !Ref Deployment
       ApiId: !Ref RaceWebSocket
 
-  EchoFunction:
-    Type: AWS::Lambda::Function
+  OnRaceChangeEventFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      Code:
-        ZipFile: >
-          exports.handler = function(event, context, callback) {
-            console.log("Receiving event from database");
-          console.log(event);
-          console.log(context);
-           callback(null,"done");
-          };
-      Handler: index.handler
+      CodeUri: websocket/
+      Handler: OnRaceChangeEvent.handler
+      MemorySize: 256
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          WEB_SOCKET_CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
+          RACES_TABLE_NAME: !Ref RacesTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: ConnectionsTable
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: RacesTable
       Role:
         Fn::GetAtt: [ LambdaRole , Arn ]
-      Runtime: nodejs12.x
-      Timeout: 300
+
+  OnRaceChangeEventPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn:
+      - RaceWebSocket
+      - OnRaceChangeEventFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref OnRaceChangeEventFunction
+      Principal: apigateway.amazonaws.com
 
   LambdaRole:
     Type: AWS::IAM::Role
@@ -510,6 +531,7 @@ Resources:
                   - dynamodb:GetRecords
                   - dynamodb:GetShardIterator
                   - dynamodb:ListStreams
+                  - dynamodb:scan
                 Resource: "*"
   ConnectionsTable:
     Type: AWS::DynamoDB::Table
@@ -525,8 +547,6 @@ Resources:
         WriteCapacityUnits: 5
       SSESpecification:
         SSEEnabled: True
-      StreamSpecification:
-        StreamViewType: NEW_IMAGE
       TableName:
         Fn::Sub: websocket-connections-${StageName}
 
@@ -536,9 +556,9 @@ Resources:
       BatchSize: 1
       Enabled: True
       EventSourceArn:
-        Fn::GetAtt: [ ConnectionsTable , StreamArn ]
+        Fn::GetAtt: [ RacesTable , StreamArn ]
       FunctionName:
-        Fn::GetAtt: [ EchoFunction , Arn ]
+        Fn::GetAtt: [ OnRaceChangeEventFunction , Arn ]
       StartingPosition: LATEST
 
   OnConnectFunction:
@@ -586,34 +606,6 @@ Resources:
     Properties:
       Action: lambda:InvokeFunction
       FunctionName: !Ref OnDisconnectFunction
-      Principal: apigateway.amazonaws.com
-  OnRaceChangeEventFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: websocket/
-      Handler: OnRaceChangeEvent.handler
-      MemorySize: 256
-      Runtime: nodejs12.x
-      Environment:
-        Variables:
-          WEB_SOCKET_CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
-          RACES_TABLE_NAME: !Ref RacesTable
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: ConnectionsTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RacesTable
-
-  OnRaceChangeEventPermission:
-    Type: AWS::Lambda::Permission
-    DependsOn:
-      - RaceWebSocket
-      - OnRaceChangeEventFunction
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !Ref OnRaceChangeEventFunction
       Principal: apigateway.amazonaws.com
 
 Outputs:

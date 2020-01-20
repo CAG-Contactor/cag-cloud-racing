@@ -2,14 +2,17 @@ const AWS = require('aws-sdk');
 
 const ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10', region: process.env.AWS_REGION });
 
-const { WEB_SOCKET_CONNECTIONS_TABLE_NAME, RACES_TABLE_NAME } = process.env;
 
-exports.handler = async event => {
+const { WEB_SOCKET_CONNECTIONS_TABLE_NAME, RACES_TABLE_NAME, WEBSOCKET } = process.env;
+
+exports.handler = async (event,context) => {
   let connectionData;
-
+  console.log("Event::: ", JSON.stringify(event));
   try {
     connectionData = await ddb.scan({ TableName: WEB_SOCKET_CONNECTIONS_TABLE_NAME, ProjectionExpression: 'connectionId' }).promise();
+    console.log("ConnectionData: ", connectionData.Count);
   } catch (e) {
+    console.log("Error:", JSON.stringify(e))
     return { statusCode: 500, body: e.stack };
   }
 
@@ -18,12 +21,14 @@ exports.handler = async event => {
     endpoint: event.requestContext.domainName + '/' + event.requestContext.stage
   });
 
+  console.log("apigwManagementApi: ", JSON.stringify(apigwManagementApi.apiVersions));
   // TODO read Races table data
   // Setup event listener (skall göras någon annanstans, kolla https://docs.aws.amazon.com/lambda/latest/dg/with-ddb-example.html)
   // Nedanståend loop skall posta race status
   const postCalls = connectionData.Items.map(async ({ connectionId }) => {
     try {
-      await apigwManagementApi.postToConnection({ ConnectionId: connectionId, Data: postData }).promise();
+      console.log("Post to: ", connectionId, JSON.stringify(event));
+      await apigwManagementApi.postToConnection({ ConnectionId: connectionId, Data: event }).promise();
     } catch (e) {
       if (e.statusCode === 410) {
         console.log(`Found stale connection, deleting ${connectionId}`);

@@ -4,7 +4,7 @@ const ddb = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10', region: p
 
 exports.handler = function (event, context, callback) {
     console.log("Receiving event from database!!");
-    console.log(event);
-    console.log(context);
+    console.log("Event: ", JSON.stringify(event));
+    console.log("Event: ", JSON.stringify(context));
     callback(null, "done");
 };
