@@ -25,7 +25,7 @@ const SignUp = () => {
             })
 
             API.signUp(data).then((resp: any) => {
-                if (resp.status === 201) {
+                if (resp.status === 201 || resp.status === 200) {
                     signInUser(data)
                 }
             }).catch((e: any) => {

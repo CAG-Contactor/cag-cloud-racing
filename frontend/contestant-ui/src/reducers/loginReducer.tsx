@@ -16,6 +16,12 @@ const loginReducer = (currentState: LoginState = INIT_STATE, action: any) => {
                 isLoggedIn: action.payload.isLoggedIn,
                 user: action.payload.user
             };
+        case "SET_USERNAME": {
+            return {
+                ...currentState,
+                user: action.payload.user
+            };
+        }
         default:
             return currentState;
     }

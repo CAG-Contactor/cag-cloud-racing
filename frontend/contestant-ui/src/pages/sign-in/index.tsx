@@ -20,6 +20,9 @@ const SignIn = () => {
 
         API.signIn(data).then((resp: any) => {
             dispatch({ type: 'AUTH', payload: { isLoggedIn: true, user: resp.data } })
+            localStorage.setItem("token", resp.data.token)
+            localStorage.setItem("username", resp.data.userName)
+
         }).catch((e: any) => {
             if (e.response.status === 401) {
                 setErrorMsg("Username or password is wrong. Please try again")

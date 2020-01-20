@@ -2,7 +2,7 @@ import * as React from "react"
 import { Container } from 'react-bootstrap'
 import API from "../../BackendAPI"
 import { useSelector } from 'react-redux';
-import { Button } from 'react-bootstrap';
+import { Button, Alert } from 'react-bootstrap';
 import { useEffect, useState } from 'react'
 
 const styles = {
@@ -34,10 +34,10 @@ const Queue = () => {
   }, []);
 
   const addMeInQueue = () => {
-    API.addMeInQueue({ name: user.userName }).then((resp) => {
+    API.addMeInQueue({ name: user.userName }).then(() => {
       getRaceQueue()
     }).catch((error) => {
-      if (error.response.status === 400) {
+      if (error.response && error.response.status === 400) {
         setErrorMsg("You are already in the Race Queue!")
       }
     })
@@ -45,11 +45,10 @@ const Queue = () => {
 
   const bailOutFromQueue = () => {
     console.log({ name: user.userName })
-    API.bailOutFromQueue({ name: user.userName }).then((resp) => {
+    API.bailOutFromQueue({ name: user.userName }).then(() => {
       getRaceQueue()
-
     }).catch((error) => {
-      if (error.response.status === 404) {
+      if (error.response && error.response.status === 404) {
         setErrorMsg("You are not in the Race Queue")
       }
     })
@@ -66,9 +65,10 @@ const Queue = () => {
 
   function AlreadyInQueueErrorMsg() {
     return errorMsg && errorMsg ?
-      <div className="alert alert-danger mt-3" role="alert">
+      <Alert className="mt-3" variant="danger" onClose={() => setErrorMsg("")} dismissible>
         {errorMsg}
-      </div> :
+      </Alert>
+      :
       null
   }
 

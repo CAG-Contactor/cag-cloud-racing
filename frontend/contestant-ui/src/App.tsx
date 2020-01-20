@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Container, Row } from 'react-bootstrap'
 import './App.css'
 import { HashRouter, Route, Link } from "react-router-dom"
@@ -9,11 +9,24 @@ import Queue from './pages/queue'
 import SignIn from './pages/sign-in'
 import SignUp from './pages/sign-up'
 import Leaderboard from './pages/leaderboard'
+import Races from './pages/races'
+import Home from './pages/home'
+import { useDispatch } from 'react-redux'
+
 
 const App = () => {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const username = localStorage.getItem("username")
+    dispatch({ type: 'SET_USERNAME', payload: { user: { userName: username } } })
+  }, []);
+
   const isLoggedIn = useSelector((state: any) => state.loginState.isLoggedIn)
 
-  return isLoggedIn ? <AppAuthenticated /> : <AppUnAuthenticated />
+  const hasToken = localStorage.getItem("token");
+
+  return (isLoggedIn || !!hasToken) ? <AppAuthenticated /> : <AppUnAuthenticated />
 }
 
 function AppUnAuthenticated() {
@@ -59,23 +72,14 @@ function AppAuthenticated() {
           <Leaderboard />
         </Route>
         <Route path="/my-races">
-          <Users />
+          <Races />
         </Route>
         <Route exact path="/">
           <Home />
         </Route>
-
       </div>
     </HashRouter>
   )
-}
-
-function Home() {
-  return <h2>Home</h2>;
-}
-
-function Users() {
-  return <h2>Users</h2>;
 }
 
 
