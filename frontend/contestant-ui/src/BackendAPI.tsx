@@ -6,6 +6,7 @@ console.log('API_ENDPOINT', env)
 const API = {
     signUp: (body: any) => axios.post(`${env}/registered-user`, body),
     signIn: (body: any) => axios.post(`${env}/user-login`, body),
+    signOut: (token: any) => axios.delete(`${env}/user-login/${token}`),
 
     addMeInQueue: (body: any) => axios.post(`${env}/race-queue`, body),
     getQueue: () => axios.get(`${env}/race-queue`),
