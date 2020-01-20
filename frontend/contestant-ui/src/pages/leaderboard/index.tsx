@@ -8,12 +8,19 @@ const Leaderboard = () => {
     const [leaderboard, setLeaderboard] = useState([])
 
     useEffect(() => {
+        fetchLeaderboard()
+
+        const oneMin = 60000
+        const interval = setInterval(() => fetchLeaderboard(), oneMin)
+
+        return () => clearTimeout(interval)
+    }, []);
+
+    const fetchLeaderboard = () => {
         API.getLeaderboard().then((resp: any) => {
             setLeaderboard(resp.data)
-        }).catch((e) => {
-
-        })
-    }, []);
+        });
+    }
 
     const getResultText = (type: string) => {
         switch (type) {
@@ -41,8 +48,8 @@ const Leaderboard = () => {
                     {leaderboard.map((user: any, index) =>
                         <tr key={index}>
                             <td>{user.userName}</td>
-                            <td><Moment format="mm:ss:SSS">{user.finishTime}</Moment></td>
-                            <td><Moment format="mm:ss:SSS">{user.splitTime}</Moment></td>
+                            <td><Moment format="mm:ss:SSS">{user.finishTime - user.startTime}</Moment></td>
+                            <td><Moment format="mm:ss:SSS">{user.splitTime - user.startTime}</Moment></td>
                             <td>{getResultText(user.raceStatus)}</td>
                         </tr>)}
                 </tbody>

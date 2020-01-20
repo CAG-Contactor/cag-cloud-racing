@@ -24,6 +24,15 @@ const Queue = () => {
   const [errorMsg, setErrorMsg] = useState("")
 
   const getRaceQueue = () => {
+    fetchRaceQueue()
+
+    const oneMin = 60000
+    const interval = setInterval(() => fetchRaceQueue(), oneMin)
+
+    return () => clearTimeout(interval)
+  }
+
+  const fetchRaceQueue = () => {
     API.getQueue().then((resp: any) => {
       setQueue(resp.data)
     })
