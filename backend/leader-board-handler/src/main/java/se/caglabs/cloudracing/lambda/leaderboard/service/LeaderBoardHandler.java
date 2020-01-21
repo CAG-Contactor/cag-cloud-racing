@@ -23,7 +23,7 @@ public class LeaderBoardHandler {
         try {
             List<Race> races = getRaceDao().findAll().stream()
                     .filter(r -> r.getRaceStatus() == Race.RaceStatus.FINISHED)
-                    .sorted(Comparator.comparingLong(Race::getFinishTime))
+                    .sorted(Comparator.comparingLong(Race::getRaceTime))
                     .collect(Collectors.toList());
             return new APIGatewayProxyResponseEvent()
               .withHeaders(new CorsHeaders())

@@ -1,6 +1,7 @@
 package se.caglabs.cloudracing.common.persistence.race.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,4 +34,10 @@ public class Race {
     private Long finishTime;
     @DynamoDBAttribute(attributeName="createTime")
     private Long createTime;
+
+    @JsonIgnore
+    // Convenience method to get the time for the race
+    public Long getRaceTime() {
+        return (finishTime - startTime);
+    }
 }
