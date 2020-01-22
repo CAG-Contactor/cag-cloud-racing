@@ -18,8 +18,10 @@ import se.caglabs.cloudracing.common.persistence.session.dao.SessionDaoImpl;
 import se.caglabs.cloudracing.common.persistence.session.model.Session;
 import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -87,7 +89,9 @@ public class RegisteredUserService {
      */
     APIGatewayProxyResponseEvent getUserRace(APIGatewayProxyRequestEvent request) throws JsonProcessingException {
         User user = getUserDao().getUser(request.getPathParameters().get(NAME));
-        List<Race> races = getRaceDao().findAllByUserName(user.getName());
+        List<Race> races = getRaceDao().findAllByUserName(user.getName()).stream()
+                .sorted(Comparator.comparingLong(Race::getCreateTime))
+                .collect(Collectors.toList());
 
         return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody(mapper.writeValueAsString(races));
     }

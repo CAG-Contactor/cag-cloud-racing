@@ -41,6 +41,7 @@ const Leaderboard = () => {
                         <th>Name</th>
                         <th>Time</th>
                         <th>Split</th>
+                        <th>When</th>
                         <th>Result</th>
                     </tr>
                 </thead>
@@ -50,6 +51,7 @@ const Leaderboard = () => {
                             <td>{user.userName}</td>
                             <td><Moment format="mm:ss:SSS">{user.finishTime - user.startTime}</Moment></td>
                             <td><Moment format="mm:ss:SSS">{user.splitTime - user.startTime}</Moment></td>
+                            <td><Moment format="YYYY-MM-DD HH:mm">{user.startTime}</Moment></td>
                             <td>{getResultText(user.raceStatus)}</td>
                         </tr>)}
                 </tbody>
