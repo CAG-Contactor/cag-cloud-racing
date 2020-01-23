@@ -1,0 +1,34 @@
+$table-dark-bg: black;
+$table-dark-color: #4cff2c;
+
+@import "~bootstrap";
+
+body {
+  background-color: black;
+}
+
+.currentrace {
+  font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  background-color: black;
+  color: #4cff2c;
+  font-size: xx-large;
+  margin-top: 25%;
+}
+
+.leaderboard {
+  h1 {
+    font-size: 4rem;
+  }
+  font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  background-color: black;
+  color: #4cff2c;
+}
+
+.channelstatus {
+  //position: absolute;
+  //top: 0;
+  //right: 0;
+  background-color: black;
+  color: #4cff2c;
+  font-size: xx-small;
+}

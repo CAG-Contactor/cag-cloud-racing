@@ -382,7 +382,8 @@ Resources:
       SSESpecification:
         SSEEnabled: True
       StreamSpecification:
-        StreamViewType: NEW_IMAGE
+        StreamViewType: NEW_AND_OLD_IMAGES
+#        StreamViewType: NEW_IMAGE
 
   SessionsTable:
     Type: AWS::Serverless::SimpleTable
@@ -481,13 +482,8 @@ Resources:
         Variables:
           WEB_SOCKET_CONNECTIONS_TABLE_NAME: !Ref ConnectionsTable
           RACES_TABLE_NAME: !Ref RacesTable
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: ConnectionsTable
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: RacesTable
+          WEB_SOCKET: !Ref RaceWebSocket
+          STAGE_NAME: !Ref StageName
       Role:
         Fn::GetAtt: [ LambdaRole , Arn ]
 
@@ -533,6 +529,10 @@ Resources:
                   - dynamodb:ListStreams
                   - dynamodb:scan
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - execute-api:ManageConnections
+                Resource: arn:aws:execute-api:*:*:*
   ConnectionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
