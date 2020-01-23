@@ -36,6 +36,7 @@ public class Race {
     private Long createTime;
 
     @JsonIgnore
+    @DynamoDBIgnore
     // Convenience method to get the time for the race
     public Long getRaceTime() {
         return (finishTime - startTime);
