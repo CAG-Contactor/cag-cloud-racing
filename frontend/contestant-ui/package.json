@@ -23,8 +23,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build:prod": "cross-env REACT_APP_API_ENDPOINT='backend.jfokus.caglabs.se' npm run build",
-    "build:test": "cross-env REACT_APP_API_ENDPOINT='test.backend.jfokus.caglabs.se' npm run build",
+    "build:prod": "cross-env REACT_APP_API_ENDPOINT='https://3w49x7bdo0.execute-api.eu-central-1.amazonaws.com/prod/' npm run build",
+    "build:test": "cross-env REACT_APP_API_ENDPOINT='https://syucyfv4o4.execute-api.eu-central-1.amazonaws.com/test/' npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -14,3 +14,9 @@ The system has the following main features:
 - Leader board
 
 The system is described in the [system description](docs/system-description.md).
+
+## Build and deploy
+
+Use the command `./build-and-deploy.sh -p <your AWS profile> <stage>`, e.g.:
+
+    $ ./build-and-deploy.sh -p charlie test

@@ -467,7 +467,7 @@ Resources:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
       StageName: !Ref StageName
-      Description: Prod Stage
+      Description: The stage (prod, test or personal stack)
       DeploymentId: !Ref Deployment
       ApiId: !Ref RaceWebSocket
 
