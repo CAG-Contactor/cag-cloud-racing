@@ -32,7 +32,7 @@ stack_name="cag-cloud-racing-stack-$suffix"
 echo "Deploying stack: $stack_name"
 echo "Profile: $aws_profile"
 
-# only deploy prod and test to S3
+# Only deploy prod and test stages to S3; others are expected to be run locally
 if [ "$suffix" == "prod" ] || [ "$suffix" == "test" ]; then
   echo "Building and deploying frontends..."
   if [ "$suffix" == "test" ]; then
@@ -61,9 +61,13 @@ if [ "$suffix" == "prod" ] || [ "$suffix" == "test" ]; then
   cd -
 fi
 
-#echo "Packaging backend stack..."
-#aws cloudformation package --template-file sam-template.yaml --output-template-file sam-template-output.yaml --s3-bucket se.caglabs.cloudracing2 $aws_profile
+cd backend
+mvn install -DskipTests
 
-#echo "Deploying backend stack..."
-#aws cloudformation deploy --template-file sam-template-output.yaml --stack-name $stack_name --capabilities CAPABILITY_NAMED_IAM  --parameter-overrides StageName=$suffix $aws_profile
+echo "Packaging backend stack..."
+aws cloudformation package --template-file sam-template.yaml --output-template-file sam-template-output.yaml --s3-bucket se.caglabs.cloudracing2 $aws_profile
 
+echo "Deploying backend stack..."
+aws cloudformation deploy --template-file sam-template-output.yaml --stack-name $stack_name --capabilities CAPABILITY_NAMED_IAM  --parameter-overrides StageName=$suffix $aws_profile
+
+cd -

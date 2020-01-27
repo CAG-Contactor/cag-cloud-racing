@@ -13,6 +13,7 @@ import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDao;
 import se.caglabs.cloudracing.common.persistence.registereduser.dao.UserDaoImpl;
 import se.caglabs.cloudracing.common.persistence.registereduser.exception.UserDaoException;
 import se.caglabs.cloudracing.common.persistence.registereduser.model.User;
+import se.caglabs.cloudracing.common.persistence.registereduser.model.UserType;
 import se.caglabs.cloudracing.common.persistence.session.dao.SessionDao;
 import se.caglabs.cloudracing.common.persistence.session.dao.SessionDaoImpl;
 import se.caglabs.cloudracing.common.persistence.session.model.Session;
@@ -102,6 +103,7 @@ public class RegisteredUserService {
      * @return the response
      */
     APIGatewayProxyResponseEvent userLogin(APIGatewayProxyRequestEvent request) {
+        String role = request.getHeaders().get("x-role");
         String body = request.getBody();
         try {
             User userRequest = mapper.readValue(body, User.class);
@@ -110,7 +112,10 @@ public class RegisteredUserService {
                 User user = getUserDao().getUser(userRequest.getName());
                 boolean userPasswordIsOk = PasswordDigest.digest(userRequest.getPassword())
                         .equals(user.getPassword());
-                if (userPasswordIsOk) {
+                boolean roleIsOk = UserType.ADMIN.name().equalsIgnoreCase(role) ?
+                  UserType.ADMIN.name().equalsIgnoreCase(user.getType()) :
+                  true;
+                if (userPasswordIsOk && roleIsOk) {
                     // Create and return session
                     Session session = new Session(UUID.randomUUID().toString(), user.getName());
                     getSessionDao().saveSession(session);

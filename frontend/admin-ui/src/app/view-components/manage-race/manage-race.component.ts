@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { BackendService } from '../../common-services/backend.service'
-import { mergeMap } from 'rxjs/operators'
+import { mergeMap, tap } from 'rxjs/operators'
+import { Race } from '../../domain/race.model'
 
 @Component({
   selector: 'cag-manage-race',
@@ -10,17 +11,38 @@ import { mergeMap } from 'rxjs/operators'
 export class ManageRaceComponent implements OnInit {
   raceStatus: string
   loading = true
+  queue: Race[]
+  wsMessages$ = this.backendService.wsMessages().pipe(
+    tap(() => {
+        this.backendService.getQueue()
+          .subscribe(q => this.queue = q)
+        this.backendService.fetchRaceState()
+          .subscribe(status => {
+              this.raceStatus = status
+              this.loading = false
+            },
+            (e) => {
+              this.loading = false
+            })
+      }
+    )
+  )
 
   constructor(private readonly backendService: BackendService) {
+
   }
 
   ngOnInit() {
-
+    this.backendService.getQueue()
+      .subscribe(q => this.queue = q)
     this.backendService.fetchRaceState()
       .subscribe(status => {
-        this.raceStatus = status
-        this.loading = false
-      })
+          this.raceStatus = status
+          this.loading = false
+        },
+        (e) => {
+          this.loading = false
+        })
   }
 
   get raceIsActive() {

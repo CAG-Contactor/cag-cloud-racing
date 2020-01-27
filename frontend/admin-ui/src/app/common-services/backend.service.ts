@@ -82,4 +82,15 @@ export class BackendService {
       map(({messageType, payload}) => ({messageType, payload}))
     )
   }
+
+  userLogin(name: string, password: string): Observable<string> {
+    return this.httpClient.post<string>(`${environment.APIEndpoint}/user-login`, {
+      name,
+      password
+    }, {headers: {'x-role': 'ADMIN'}})
+  }
+
+  getQueue(): Observable<Race[]> {
+    return this.httpClient.get<Race[]>(`${environment.APIEndpoint}/race-queue`)
+  }
 }

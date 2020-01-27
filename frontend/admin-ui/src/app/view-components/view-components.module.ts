@@ -13,7 +13,9 @@ import { ManageUsersComponent } from './manage-users/manage-users.component'
 import { ManageRaceComponent } from './manage-race/manage-race.component'
 import { CommonServicesModule } from '../common-services/common-services.module'
 import { AppRoutingModule } from '../app-routing/app-routing.module'
-import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component'
+import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { LoginComponent } from './login/login.component'
+import { FormsModule } from '@angular/forms'
 
 
 @NgModule({
@@ -21,7 +23,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     MainNavComponent,
     ManageUsersComponent,
     ManageRaceComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    LoginComponent
   ],
   exports: [
     MainNavComponent
@@ -37,7 +40,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     MatListModule,
     RouterModule,
     CommonServicesModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   entryComponents: [
     ConfirmationDialogComponent

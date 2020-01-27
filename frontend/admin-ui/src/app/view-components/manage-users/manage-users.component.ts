@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core'
 import { BackendService } from '../../common-services/backend.service'
 import { User } from '../../domain/user.model'
-import { mergeMap, tap } from 'rxjs/operators'
-import { Observable, of as observableOf } from 'rxjs'
+import { catchError, mergeMap, tap } from 'rxjs/operators'
+import { of as observableOf } from 'rxjs'
 import { MatDialog } from '@angular/material/dialog'
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component'
 
@@ -12,8 +12,8 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
   styleUrls: ['./manage-users.component.scss']
 })
 export class ManageUsersComponent implements OnInit {
-  users$: Observable<User[]>
-  loading = true;
+  users: User[]
+  loading = true
 
   constructor(
     private readonly backend: BackendService,
@@ -22,7 +22,9 @@ export class ManageUsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.users$ = this.getUsers()
+    this.getUsers()
+      .subscribe(users => this.users = users)
+
   }
 
   iconFor(user: User) {
@@ -53,8 +55,12 @@ export class ManageUsersComponent implements OnInit {
 
   private getUsers() {
     this.loading = true
-    return this.users$ = this.backend.fetchRegisteredUsers().pipe(
-      tap(() => this.loading = false)
+    return this.backend.fetchRegisteredUsers().pipe(
+      tap(() => this.loading = false),
+      catchError((e) => {
+        this.loading = false;
+        throw e;
+      })
     )
   }
 }

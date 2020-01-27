@@ -6,6 +6,7 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import se.caglabs.cloudracing.common.persistence.digest.PasswordDigest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

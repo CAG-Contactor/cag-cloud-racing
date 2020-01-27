@@ -3,10 +3,11 @@
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Menu</mat-toolbar>
+    <mat-toolbar>Meny</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item routerLink="/race" routerLinkActive="active">Manage race</a>
-      <a mat-list-item routerLink="/users" routerLinkActive="active">Manage users</a>
+      <a mat-list-item routerLink="/race" routerLinkActive="active">Hantera lopp</a>
+      <a mat-list-item routerLink="/users" routerLinkActive="active">Hantera användare</a>
+      <a *ngIf="authService.isLoggedIn" routerLink="/login" mat-list-item (click)="logout()">Logga ut</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

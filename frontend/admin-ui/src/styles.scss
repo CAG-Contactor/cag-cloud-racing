@@ -2,3 +2,10 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.loading-indicator {
+  z-index: 1000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+}

@@ -1,0 +1,20 @@
+<h2>Logga in</h2>
+
+<div class="login-container">
+
+  <mat-form-field>
+    <input matInput placeholder="Användarnamn" type="text" [(ngModel)]="name">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Lösenord" type="password" [(ngModel)]="password">
+  </mat-form-field>
+</div>
+<button mat-raised-button (click)="login()" *ngIf="!authService.isLoggedIn">Logga in</button>
+
+<div *ngIf="errorMessage">
+  <p class="error-message">{{errorMessage}}</p>
+</div>
+
+<div *ngIf="waiting" class="loading-indicator">
+  <mat-spinner></mat-spinner>
+</div>
