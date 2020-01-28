@@ -6,7 +6,6 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import se.caglabs.cloudracing.common.persistence.digest.PasswordDigest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -127,6 +126,16 @@ public class RegisteredUserHandlerTest {
         registeredUserHandler.route(request, context);
 
         verify(service, times(1)).userLogin(request);
+    }
+
+    @Test
+    public void shouldLogoutUser() throws Exception {
+        when(request.getResource()).thenReturn("/user-login");
+        when(request.getHttpMethod()).thenReturn("DELETE");
+
+        registeredUserHandler.route(request, context);
+
+        verify(service, times(1)).userLogout(request);
     }
 
     @Test
