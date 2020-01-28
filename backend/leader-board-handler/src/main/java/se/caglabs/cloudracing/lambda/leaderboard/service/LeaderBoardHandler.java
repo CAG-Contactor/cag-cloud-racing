@@ -13,6 +13,7 @@ import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -20,6 +21,10 @@ public class LeaderBoardHandler {
     private RaceDao raceDao;
 
     public APIGatewayProxyResponseEvent execute(APIGatewayProxyRequestEvent request, Context context) {
+        if (Objects.equals(request.getResource(), "ping")) {
+            System.out.println("Got ping");
+            return new APIGatewayProxyResponseEvent().withStatusCode(200);
+        }
         try {
             List<Race> races = getRaceDao().findAll().stream()
                     .filter(r -> r.getRaceStatus() == Race.RaceStatus.FINISHED)

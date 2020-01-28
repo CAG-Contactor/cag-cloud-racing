@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
+import java.util.Objects;
+
 @Slf4j
 public class RegisteredUserHandler {
 
@@ -30,6 +32,11 @@ public class RegisteredUserHandler {
     }
 
     public APIGatewayProxyResponseEvent route(APIGatewayProxyRequestEvent request, Context context) throws JsonProcessingException {
+        if (Objects.equals(request.getResource(), "ping")) {
+            System.out.println("Got ping");
+            return new APIGatewayProxyResponseEvent().withStatusCode(200);
+        }
+
         String resource = request.getResource();
 
         if (resource.equalsIgnoreCase(REGISTER_USER) || resource.equalsIgnoreCase(REGISTER_NEW_USER) ) {

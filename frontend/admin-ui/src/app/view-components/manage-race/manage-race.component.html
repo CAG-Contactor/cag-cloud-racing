@@ -6,7 +6,7 @@
     </mat-card-header>
     <mat-card-actions>
       <button mat-raised-button [disabled]="raceIsActive" (click)="armRace()">Aktivera lopp</button>
-      <button mat-raised-button *ngIf="!raceIsActive" (click)="abortRace()">Avbryt lopp</button>
+      <button mat-raised-button [disabled]="!raceIsActive" (click)="abortRace()">Avbryt lopp</button>
     </mat-card-actions>
   </mat-card>
 

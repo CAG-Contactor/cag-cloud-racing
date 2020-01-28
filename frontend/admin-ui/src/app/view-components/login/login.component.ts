@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core'
 import { AuthService } from '../../app-routing/auth.service'
 import { Router } from '@angular/router'
 import { HttpErrorResponse } from '@angular/common/http'
-import { tap } from 'rxjs/operators'
 
 @Component({
   selector: 'cag-login',

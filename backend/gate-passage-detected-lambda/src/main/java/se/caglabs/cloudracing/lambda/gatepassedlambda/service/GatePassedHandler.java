@@ -11,6 +11,7 @@ import se.caglabs.cloudracing.common.persistence.race.dao.RaceDaoImpl;
 import se.caglabs.cloudracing.common.persistence.race.model.Race;
 import se.caglabs.cloudracing.common.persistence.stuff.CorsHeaders;
 
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -39,6 +40,10 @@ public class GatePassedHandler {
     private RaceDao raceDao;
 
     public APIGatewayProxyResponseEvent execute(APIGatewayProxyRequestEvent request, Context context) {
+        if (Objects.equals(request.getResource(), "ping")) {
+            System.out.println("Got ping");
+            return new APIGatewayProxyResponseEvent().withStatusCode(200);
+        }
 
         String sensorIdParam = request.getQueryStringParameters().get(INPUT_SENSOR_ID);
         String timestampParam = request.getQueryStringParameters().get(INPUT_TIMESTAMP);

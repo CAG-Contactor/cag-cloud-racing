@@ -5,12 +5,19 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 @Slf4j
 public class RaceQueueHandler {
 
     private RaceQueueService raceQueueService = new RaceQueueService();
 
     public APIGatewayProxyResponseEvent route(APIGatewayProxyRequestEvent request, Context context) {
+        if (Objects.equals(request.getResource(), "ping")) {
+            System.out.println("Got ping");
+            return new APIGatewayProxyResponseEvent().withStatusCode(200);
+        }
+
         switch (request.getHttpMethod()) {
             case "GET":
                 return raceQueueService.getRaceQueue();
