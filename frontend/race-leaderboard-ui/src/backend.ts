@@ -1,7 +1,7 @@
 import { ReplaySubject } from 'rxjs'
 
-const backendApiBaseUrl = process.env.REACT_APP_API_ENDPOINT || 'https://fh48ov3fpj.execute-api.eu-central-1.amazonaws.com/ccjobi'
-const backendWsBaseUrl = process.env.REACT_WS_ENDPOINT || 'wss://e1d1f0mupa.execute-api.eu-central-1.amazonaws.com/ccjobi/'
+const backendApiBaseUrl = process.env.REACT_APP_API_ENDPOINT || undefined
+const backendWsBaseUrl = process.env.REACT_APP_WS_ENDPOINT || undefined
 
 export interface Race {
   userName: string

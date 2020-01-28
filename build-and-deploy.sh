@@ -43,18 +43,21 @@ if [ "$suffix" == "prod" ] || [ "$suffix" == "test" ]; then
   echo "s3_prefix=$s3_prefix"
 
   cd frontend/contestant-ui
+  rm -rf build
   npm run build:$suffix
   echo "aws $aws_profile s3 cp build s3://${s3_prefix}jfokus.caglabs.se --recursive --acl public-read"
   aws $aws_profile s3 cp build s3://${s3_prefix}jfokus.caglabs.se --recursive --acl public-read
   cd -
 
   cd frontend/admin-ui
+  rm -rf dist
   npm run build:$suffix
   echo "aws $aws_profile s3 cp dist/admin-ui/ s3://${s3_prefix}admin.jfokus.caglabs.se --recursive --acl public-read"
   aws $aws_profile s3 cp dist/admin-ui/ s3://${s3_prefix}admin.jfokus.caglabs.se --recursive --acl public-read
   cd -
 
   cd frontend/race-leaderboard-ui
+  rm -rf build
   npm run build:$suffix
   echo "aws $aws_profile s3 cp build s3://${s3_prefix}leaderboard.jfokus.caglabs.se --recursive --acl public-read"
   aws $aws_profile s3 cp build s3://${s3_prefix}leaderboard.jfokus.caglabs.se --recursive --acl public-read
