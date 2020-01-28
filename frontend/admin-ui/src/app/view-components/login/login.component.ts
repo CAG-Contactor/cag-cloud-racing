@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   errorMessage: string
   waiting: boolean
 
-  constructor(private readonly authService: AuthService, private readonly router: Router) {
+  constructor(public readonly authService: AuthService, private readonly router: Router) {
   }
 
   ngOnInit() {
