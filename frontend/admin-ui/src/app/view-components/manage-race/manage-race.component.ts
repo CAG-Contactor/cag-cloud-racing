@@ -61,4 +61,9 @@ export class ManageRaceComponent implements OnInit {
         this.loading = false
       })
   }
+
+  abortRace() {
+    this.backendService.abortCurrentRace()
+      .subscribe(() => {})
+  }
 }

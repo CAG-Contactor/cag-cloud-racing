@@ -21,6 +21,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:test": "cross-env REACT_APP_API_ENDPOINT='https://syucyfv4o4.execute-api.eu-central-1.amazonaws.com/test' REACT_APP_WS_ENDPOINT='wss://7uv8gr58b3.execute-api.eu-central-1.amazonaws.com/test' react-scripts start",
     "build": "react-scripts build",
     "build:prod": "cross-env REACT_APP_API_ENDPOINT='https://3w49x7bdo0.execute-api.eu-central-1.amazonaws.com/prod' REACT_APP_WS_ENDPOINT='wss://ggwkdd2h3k.execute-api.eu-central-1.amazonaws.com/prod' npm run build",
     "build:test": "cross-env REACT_APP_API_ENDPOINT='https://syucyfv4o4.execute-api.eu-central-1.amazonaws.com/test' REACT_APP_WS_ENDPOINT='wss://7uv8gr58b3.execute-api.eu-central-1.amazonaws.com/test' npm run build",

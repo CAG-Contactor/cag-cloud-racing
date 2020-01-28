@@ -93,4 +93,8 @@ export class BackendService {
   getQueue(): Observable<Race[]> {
     return this.httpClient.get<Race[]>(`${environment.APIEndpoint}/race-queue`)
   }
+
+  abortCurrentRace(): Observable<void> {
+    return this.httpClient.delete<void>(`${environment.APIEndpoint}/current-race`)
+  }
 }
