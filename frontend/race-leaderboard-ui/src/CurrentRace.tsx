@@ -14,6 +14,7 @@ const CurrentRace: React.FC<{ onChangeView?: () => void }> = (props) => {
   const [finishTime, setFinishTime] = useState<number | undefined>()
   const [timerActive, setTimerActive] = useState<boolean>(false)
   const [currentTime, setCurrentTime] = useState<number>(0)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (timerActive) {
@@ -29,6 +30,7 @@ const CurrentRace: React.FC<{ onChangeView?: () => void }> = (props) => {
 
   useEffect(() => {
     if (!raceStatus) {
+      setLoading(true)
       backend.getCurrentRace()
         .then(cr => {
           console.log('current race:', cr)
@@ -41,6 +43,7 @@ const CurrentRace: React.FC<{ onChangeView?: () => void }> = (props) => {
 
         })
         .catch(() => onChangeView())
+        .finally(() => setLoading(false))
     }
   }, [raceStatus, onChangeView])
 
@@ -53,6 +56,7 @@ const CurrentRace: React.FC<{ onChangeView?: () => void }> = (props) => {
           case 'RACE_ABORTED':
             setSplitTime(undefined)
             setFinishTime(undefined)
+            setStartTime(undefined)
             setCurrentTime(0)
             setTimerActive(false)
             setRaceStatus({status: e.type, user: e.user})
@@ -83,43 +87,48 @@ const CurrentRace: React.FC<{ onChangeView?: () => void }> = (props) => {
   }, [onChangeView])
 
   return (
-    <div className="currentrace d-flex flex-column align-items-center">
-      <div className="container">
-        <div className="row">
-          <div className="col-6 text-right">Race status</div>
-          <div className="col-6">{raceStatus?.status}</div>
-        </div>
-        <div className="row">
-          <div className="col-6 text-right">User</div>
-          <div className="col-6">{raceStatus?.user}</div>
-        </div>
-        {/*<div className="row">*/}
-        {/*  <div className="col-6 text-right">Timer active</div>*/}
-        {/*  <div className="col-6">{timerActive}</div>*/}
-        {/*</div>*/}
-        {/*<div className="row">*/}
-        {/*  <div className="col-6 text-right">Current time</div>*/}
-        {/*  <div className="col-6">{currentTime} {finishTime}</div>*/}
-        {/*</div>*/}
-        <div className="row">
-          <div className="col-6 text-right">Elapsed time</div>
-          <div className="col-6">{startTime && finishTime ?
-            <Moment format="mm:ss:SSS">{(finishTime - startTime)}</Moment> :
-            startTime && <Moment format="mm:ss:SSS">{(currentTime - startTime)}</Moment>}
+    <>
+      {loading && <p className="loading-indicator">Laddar...</p>}
+      {!loading &&
+      <div className="currentrace d-flex flex-column align-items-center">
+        <div className="container">
+          <div className="row">
+            <div className="col-6 text-right">Race status</div>
+            <div className="col-6">{raceStatus?.status}</div>
+          </div>
+          <div className="row">
+            <div className="col-6 text-right">User</div>
+            <div className="col-6">{raceStatus?.user}</div>
+          </div>
+          {/*<div className="row">*/}
+          {/*  <div className="col-6 text-right">Timer active</div>*/}
+          {/*  <div className="col-6">{timerActive}</div>*/}
+          {/*</div>*/}
+          {/*<div className="row">*/}
+          {/*  <div className="col-6 text-right">Current time</div>*/}
+          {/*  <div className="col-6">{currentTime} {finishTime}</div>*/}
+          {/*</div>*/}
+          <div className="row">
+            <div className="col-6 text-right">Elapsed time</div>
+            <div className="col-6">{startTime && finishTime ?
+              <Moment format="mm:ss:SSS">{(finishTime - startTime)}</Moment> :
+              startTime && <Moment format="mm:ss:SSS">{(currentTime - startTime)}</Moment>}
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-6 text-right">Split time</div>
+            <div className="col-6">{splitTime && startTime &&
+            <Moment format="mm:ss:SSS">{(splitTime - startTime)}</Moment>}</div>
+          </div>
+          <div className="row">
+            <div className="col-6 text-right">Finish time</div>
+            <div className="col-6">{finishTime && startTime &&
+            <Moment format="mm:ss:SSS">{(finishTime - startTime)}</Moment>}</div>
           </div>
         </div>
-        <div className="row">
-          <div className="col-6 text-right">Split time</div>
-          <div className="col-6">{splitTime && startTime &&
-          <Moment format="mm:ss:SSS">{(splitTime - startTime)}</Moment>}</div>
-        </div>
-        <div className="row">
-          <div className="col-6 text-right">Finish time</div>
-          <div className="col-6">{finishTime && startTime &&
-          <Moment format="mm:ss:SSS">{(finishTime - startTime)}</Moment>}</div>
-        </div>
       </div>
-    </div>
+      }
+    </>
   )
 }
 

@@ -20,3 +20,15 @@ The system is described in the [system description](docs/system-description.md).
 Use the command `./build-and-deploy.sh -p <your AWS profile> <stage>`, e.g.:
 
     $ ./build-and-deploy.sh -p charlie test
+    
+## Addresses 
+
+### Prod
+[Contestant-UI](jfokus.caglabs.se)    
+[Admin-UI](admin.jfokus.caglabs.se)    
+[Race/Leaderboard-UI](leaderboard.jfokus.caglabs.se)    
+
+### Test
+[Contestant-UI](test.jfokus.caglabs.se)    
+[Admin-UI](test.admin.jfokus.caglabs.se)    
+[Race/Leaderboard-UI](test.leaderboard.jfokus.caglabs.se)    

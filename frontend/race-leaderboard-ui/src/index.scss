@@ -12,13 +12,24 @@ body {
   background-color: black;
   color: #4cff2c;
   font-size: xx-large;
-  margin-top: 25%;
+  margin-top: 10%;
+}
+
+.loading-indicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  font-size: 4rem;
+  font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  background-color: black;
+  color: #4cff2c;
 }
 
 .leaderboard {
   h1 {
     font-size: 4rem;
   }
+
   font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   background-color: black;
   color: #4cff2c;
