@@ -79,7 +79,7 @@ const CurrentRace: React.FC<{ onChangeView?: () => void }> = (props) => {
             setFinishTime(e.finishTime)
             setCurrentTime(e.finishTime)
             setRaceStatus({user: e.user, status: e.type})
-            setTimeout(() => onChangeView(), 30000)
+            setTimeout(() => onChangeView(), 15000)
             break
           default:
           // do nothing

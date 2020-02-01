@@ -10,10 +10,12 @@ const Races = () => {
     const user = useSelector((state: any) => state.loginState.user)
 
     useEffect(() => {
-        API.getRaces(user.userName).then((resp: any) => {
-            setRaces(resp.data)
-        }).catch((e) => {
-        })
+        if (user.userName) {
+            API.getRaces(user.userName).then((resp: any) => {
+                setRaces(resp.data)
+            }).catch((e) => {
+            })
+        }
     }, [user.userName]);
 
     const getResultText = (type: string) => {

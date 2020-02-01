@@ -91,10 +91,14 @@ public class RegisteredUserService {
     APIGatewayProxyResponseEvent getUserRace(APIGatewayProxyRequestEvent request) throws JsonProcessingException {
         User user = getUserDao().getUser(request.getPathParameters().get(NAME));
         List<Race> races = getRaceDao().findAllByUserName(user.getName()).stream()
-                .sorted(Comparator.comparingLong(Race::getCreateTime))
+                .sorted(Comparator.comparingLong(this::extractCreateTimeOrLongMax))
                 .collect(Collectors.toList());
 
         return new APIGatewayProxyResponseEvent().withHeaders(new CorsHeaders()).withStatusCode(200).withBody(mapper.writeValueAsString(races));
+    }
+
+    private long extractCreateTimeOrLongMax(Race r) {
+        return r.getCreateTime() != null ? r.getCreateTime() : Long.MAX_VALUE;
     }
 
     /**

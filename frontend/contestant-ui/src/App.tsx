@@ -49,6 +49,12 @@ function AppUnAuthenticated() {
 }
 
 function AppAuthenticated() {
+  function logout() {
+    localStorage.removeItem("token")
+    localStorage.removeItem("username")
+    window.location.reload()
+  }
+
   return (
     <HashRouter>
       <div>
@@ -62,6 +68,7 @@ function AppAuthenticated() {
               <Link to='/my-races' className="nav-link">My races</Link>
             </Nav>
           </Navbar.Collapse>
+          <Link to='/my-races' className="nav-link float-right" onClick={logout}>Logout</Link>
         </Navbar>
 
 
