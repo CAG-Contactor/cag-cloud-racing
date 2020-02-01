@@ -15,16 +15,20 @@ const CurrentRace: React.FC<{ onChangeView?: () => void }> = (props) => {
   const [timerActive, setTimerActive] = useState<boolean>(false)
   const [currentTime, setCurrentTime] = useState<number>(0)
   const [loading, setLoading] = useState(false)
+  const [timer, setTimer] = useState<number | undefined>()
 
   useEffect(() => {
-    if (timerActive) {
-      setTimeout(() => {
-        if (!finishTime) {
-          setCurrentTime(prev => prev + 100)
-        } else {
-          setCurrentTime(finishTime)
-        }
-      }, 100)
+    if (timerActive && !timer) {
+      setTimer(
+        window.setTimeout(() => {
+          setTimer(undefined)
+          if (!finishTime) {
+            setCurrentTime(prev => prev + 100)
+          } else {
+            setCurrentTime(finishTime)
+          }
+        }, 100)
+      )
     }
   }, [timerActive, currentTime, finishTime])
 
