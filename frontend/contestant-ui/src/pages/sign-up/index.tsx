@@ -9,12 +9,13 @@ const SignUp = () => {
     const [password, setPassword] = useState()
     const [password2, setPassword2] = useState()
     const [errorMsg, setErrorMsg] = useState()
+    const [loading, setLoading] = useState(false)
 
     const dispatch = useDispatch()
 
     const signUp = (e: any) => {
         e.preventDefault();
-
+        setLoading(true)
         if (password !== password2) {
             setErrorMsg("Password doesn't match")
         } else {
@@ -47,7 +48,7 @@ const SignUp = () => {
             } else {
                 setErrorMsg(`Something went wrong, failed with msg: ${e.message}`)
             }
-        });
+        }).finally(() => setLoading(false));
     }
 
     return (
@@ -88,11 +89,14 @@ const SignUp = () => {
                                 />
                             </InputGroup>
 
+                            {loading && <p className="loading-indicator">Signing in...</p>}
+                            {!loading &&
                             <button className="btn btn-lg btn-primary btn-block mb-3" type="submit">
                                 Sign up
                             </button>
+                            }
                             {
-                                errorMsg && errorMsg ?
+                                errorMsg ?
                                     <div className="alert alert-danger mt-3" role="alert">
                                         {errorMsg}
                                     </div> :

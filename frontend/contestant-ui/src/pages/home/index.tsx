@@ -9,7 +9,7 @@ const styles = {
 
 const Home = () => {
     return (
-        <Container style={{ textAlign: "center" }}>
+        <Container style={{ textAlign: "center" }} className="mt-2">
             <h1>Home</h1>
 
 

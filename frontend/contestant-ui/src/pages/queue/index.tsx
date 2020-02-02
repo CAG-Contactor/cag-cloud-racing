@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Container } from 'react-bootstrap'
+import { Col, Container } from 'react-bootstrap'
 import API from "../../BackendAPI"
 import { useSelector } from 'react-redux';
 import { Button, Alert } from 'react-bootstrap';
@@ -22,6 +22,7 @@ const Queue = () => {
   const user = useSelector((state: any) => state.loginState.user)
   const [queue, setQueue] = useState([])
   const [errorMsg, setErrorMsg] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const getRaceQueue = () => {
     fetchRaceQueue()
@@ -33,9 +34,10 @@ const Queue = () => {
   }
 
   const fetchRaceQueue = () => {
+    setLoading(true)
     API.getQueue().then((resp: any) => {
       setQueue(resp.data)
-    })
+    }).finally(() => setLoading(false))
   }
 
   useEffect(() => {
@@ -43,6 +45,7 @@ const Queue = () => {
   }, []);
 
   const addMeInQueue = () => {
+    setLoading(true)
     API.addMeInQueue({ name: user.userName }).then(() => {
       getRaceQueue()
     }).catch((error) => {
@@ -53,7 +56,7 @@ const Queue = () => {
   }
 
   const bailOutFromQueue = () => {
-    console.log({ name: user.userName })
+    setLoading(true)
     API.bailOutFromQueue({ name: user.userName }).then(() => {
       getRaceQueue()
     }).catch((error) => {
@@ -66,14 +69,14 @@ const Queue = () => {
   function SignUpForRace() {
     return (
       <div className={"mb-5"}>
-        <p style={styles.text}>Sign up for queue and wait for your turn to race. You will get an notification when it's time to race!</p>
+        <p style={styles.text}>Sign up for queue and wait for your turn to race.</p>
         <Button size={"lg"} onClick={addMeInQueue} variant="primary">Sign up for race</Button>
       </div>
     )
   }
 
   function AlreadyInQueueErrorMsg() {
-    return errorMsg && errorMsg ?
+    return errorMsg ?
       <Alert className="mt-3" variant="danger" onClose={() => setErrorMsg("")} dismissible>
         {errorMsg}
       </Alert>
@@ -88,6 +91,10 @@ const Queue = () => {
         <Button size={"lg"} onClick={bailOutFromQueue} variant="primary">Bail out</Button>
       </div>
     )
+  }
+
+  function LoadingSpinner() {
+    return loading ? loading && <p className="loading-indicator">Loading queue...</p> : null
   }
 
   function Queue() {
@@ -112,16 +119,18 @@ const Queue = () => {
   }
 
   return (
-    <Container style={{ textAlign: "center" }}>
+    <Container style={{ textAlign: "center" }} className="mt-2">
       <h1>Queue</h1>
 
-      <AlreadyInQueueErrorMsg />
+      <AlreadyInQueueErrorMsg/>
 
-      <SignUpForRace />
+      <SignUpForRace/>
 
-      <LeaveQueue />
+      <LeaveQueue/>
 
-      <Queue />
+      <Queue/>
+
+      <LoadingSpinner/>
     </Container>
   )
 }

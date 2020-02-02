@@ -8,10 +8,12 @@ const SignIn = () => {
     const [username, setUsername] = useState()
     const [password, setPassword] = useState()
     const [errorMsg, setErrorMsg] = useState()
+    const [loading, setLoading] = useState(false)
     const dispatch = useDispatch()
 
     const signIn = (e: any) => {
         e.preventDefault();
+        setLoading(true)
         const data = JSON.stringify({
             name: username,
             password: password,
@@ -29,7 +31,7 @@ const SignIn = () => {
             } else {
                 setErrorMsg(`Something went wrong, failed with msg: ${e.message}`)
             }
-        });
+        }).finally(() => setLoading(false));
     }
 
     return (
@@ -59,15 +61,18 @@ const SignIn = () => {
                                 />
                             </InputGroup>
 
+                            {loading && <p className="loading-indicator">Signing in...</p>}
+                            {!loading &&
                             <button className="btn btn-lg btn-primary btn-block mb-3" type="submit">
                                 Sign in
                             </button>
+                            }
                             {
-                                errorMsg && errorMsg ?
-                                    <div className="alert alert-danger mt-3" role="alert">
-                                        {errorMsg}
-                                    </div> :
-                                    ''
+                                errorMsg ?
+                                  <div className="alert alert-danger mt-3" role="alert">
+                                      {errorMsg}
+                                  </div> :
+                                  ''
                             }
                         </Col>
                     </Row>
