@@ -48,7 +48,7 @@ const SignUp = () => {
             } else {
                 setErrorMsg(`Something went wrong, failed with msg: ${e.message}`)
             }
-        }).finally(() => setLoading(false));
+        });
     }
 
     return (
@@ -91,8 +91,8 @@ const SignUp = () => {
 
                             {loading && <p className="loading-indicator">Signing in...</p>}
                             {!loading &&
-                            <button className="btn btn-lg btn-primary btn-block mb-3" type="submit">
-                                Sign up
+                                <button className="btn btn-lg btn-primary btn-block mb-3" type="submit">
+                                    Sign up
                             </button>
                             }
                             {

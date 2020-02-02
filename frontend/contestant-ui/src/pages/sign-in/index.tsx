@@ -31,7 +31,7 @@ const SignIn = () => {
             } else {
                 setErrorMsg(`Something went wrong, failed with msg: ${e.message}`)
             }
-        }).finally(() => setLoading(false));
+        });
     }
 
     return (
@@ -63,16 +63,16 @@ const SignIn = () => {
 
                             {loading && <p className="loading-indicator">Signing in...</p>}
                             {!loading &&
-                            <button className="btn btn-lg btn-primary btn-block mb-3" type="submit">
-                                Sign in
+                                <button className="btn btn-lg btn-primary btn-block mb-3" type="submit">
+                                    Sign in
                             </button>
                             }
                             {
                                 errorMsg ?
-                                  <div className="alert alert-danger mt-3" role="alert">
-                                      {errorMsg}
-                                  </div> :
-                                  ''
+                                    <div className="alert alert-danger mt-3" role="alert">
+                                        {errorMsg}
+                                    </div> :
+                                    ''
                             }
                         </Col>
                     </Row>

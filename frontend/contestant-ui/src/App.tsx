@@ -62,10 +62,26 @@ function AppAuthenticated() {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
-              <Link to='/' className="nav-link">Home</Link>
-              <Link to='/queue' className="nav-link">Queue</Link>
-              <Link to='/leaderboard' className="nav-link">Leaderboard</Link>
-              <Link to='/my-races' className="nav-link">My races</Link>
+              <Nav.Item>
+                <Nav.Link eventKey="1" as={Link} to="/">
+                  Home
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="2" as={Link} to="/queue">
+                  Queue
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="3" as={Link} to="/leaderboard">
+                  Leaderboard
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="4" as={Link} to="/my-races">
+                  My races
+                </Nav.Link>
+              </Nav.Item>
             </Nav>
           </Navbar.Collapse>
           <Link to='/my-races' className="nav-link float-right" onClick={logout}>Logout</Link>

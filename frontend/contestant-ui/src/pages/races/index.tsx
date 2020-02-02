@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Container } from 'react-bootstrap'
+import { Container, Row } from 'react-bootstrap'
 import API from "../../BackendAPI"
 import { useEffect, useState } from 'react'
 import Moment from 'react-moment';
@@ -37,7 +37,6 @@ const Races = () => {
                         <th>Name</th>
                         <th>Time</th>
                         <th>Split</th>
-                        <th>When</th>
                         <th>Result</th>
                     </tr>
                 </thead>
@@ -47,7 +46,6 @@ const Races = () => {
                             <td>{race.userName}</td>
                             <td><Moment format="mm:ss:SSS">{race.finishTime - race.startTime}</Moment></td>
                             <td><Moment format="mm:ss:SSS">{race.splitTime - race.startTime}</Moment></td>
-                            <td><Moment format="YYYY-MM-DD HH:mm">{race.startTime}</Moment></td>
                             <td>{getResultText(race.raceStatus)}</td>
                         </tr>)}
                 </tbody>
@@ -57,7 +55,9 @@ const Races = () => {
     return (
         <Container style={{ textAlign: "center" }}>
             <h1>My Races</h1>
-            <Races />
+            <Row>
+                <Races />
+            </Row>
         </Container>
     )
 }
