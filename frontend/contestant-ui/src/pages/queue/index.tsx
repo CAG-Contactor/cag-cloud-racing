@@ -11,7 +11,8 @@ const styles = {
   },
   text: {
     fontSize: 13,
-    fontWeight: 600
+    fontWeight: 600,
+    color: '#4cff2c'
   },
   queue: {
     listStyle: "none"
@@ -101,7 +102,7 @@ const Queue = () => {
     let position = 1
 
     return (
-      <table className="center table table-striped">
+      <table style={{ color: '#4cff2c' }} className="center table table-striped">
         <thead>
           <tr>
             <th>Queue Number</th>
@@ -122,15 +123,15 @@ const Queue = () => {
     <Container style={{ textAlign: "center" }} className="mt-2">
       <h1>Queue</h1>
 
-      <AlreadyInQueueErrorMsg/>
+      <AlreadyInQueueErrorMsg />
 
-      <SignUpForRace/>
+      <SignUpForRace />
 
-      <LeaveQueue/>
+      <LeaveQueue />
 
-      <Queue/>
+      <Queue />
 
-      <LoadingSpinner/>
+      <LoadingSpinner />
     </Container>
   )
 }

@@ -26,6 +26,7 @@ const SignIn = () => {
             localStorage.setItem("username", resp.data.userName)
 
         }).catch((e: any) => {
+            setLoading(false);
             if (e.response.status === 401) {
                 setErrorMsg("Username or password is wrong. Please try again")
             } else {

@@ -13,7 +13,6 @@ import Races from './pages/races'
 import Home from './pages/home'
 import { useDispatch } from 'react-redux'
 
-
 const App = () => {
   const dispatch = useDispatch()
 
@@ -58,7 +57,7 @@ function AppAuthenticated() {
   return (
     <HashRouter>
       <div>
-        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar style={{ backgroundColor: 'black' }} collapseOnSelect expand="lg"  variant="dark">
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">

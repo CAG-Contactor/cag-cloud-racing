@@ -20,3 +20,11 @@
 .App-link {
   color: #09d3ac;
 }
+
+h1, h2, h3, h4 {
+  color: #4cff2c;
+}
+
+body {
+  background-color: black
+}

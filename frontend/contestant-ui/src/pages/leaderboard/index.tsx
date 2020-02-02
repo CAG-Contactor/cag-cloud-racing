@@ -35,7 +35,7 @@ const Leaderboard = () => {
 
     function Leaderboard() {
         return (
-            <table className="center table table-striped">
+            <table style={{ color: '#4cff2c' }} className="center table table-striped">
                 <thead>
                     <tr>
                         <th>Name</th>

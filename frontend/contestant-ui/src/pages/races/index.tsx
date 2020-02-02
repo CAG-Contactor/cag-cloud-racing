@@ -13,7 +13,6 @@ const Races = () => {
         if (user.userName) {
             API.getRaces(user.userName).then((resp: any) => {
                 setRaces(resp.data)
-            }).catch((e) => {
             })
         }
     }, [user.userName]);
@@ -31,7 +30,7 @@ const Races = () => {
 
     function Races() {
         return (
-            <table className="center table table-striped">
+            <table style={{ color: '#4cff2c' }} className="center table table-striped">
                 <thead>
                     <tr>
                         <th>Name</th>
