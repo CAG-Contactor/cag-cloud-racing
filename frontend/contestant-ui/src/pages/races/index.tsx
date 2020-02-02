@@ -24,7 +24,7 @@ const Races = () => {
             case 'WALKOVER':
                 return 'Walkover';
             default:
-                return 'Disqualified'
+                return 'N/A'
         }
     };
 
@@ -52,7 +52,7 @@ const Races = () => {
     }
 
     return (
-        <Container style={{ textAlign: "center" }}>
+        <Container style={{ textAlign: "center" }} className="mt-2">
             <h1>My Races</h1>
             <Row>
                 <Races />

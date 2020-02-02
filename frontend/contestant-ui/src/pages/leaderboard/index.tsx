@@ -29,7 +29,7 @@ const Leaderboard = () => {
             case 'WALKOVER':
                 return 'Walkover';
             default:
-                return 'Disqualified'
+                return 'N/A'
         }
     };
 
@@ -57,7 +57,7 @@ const Leaderboard = () => {
     }
 
     return (
-        <Container style={{ textAlign: "center" }}>
+        <Container style={{ textAlign: "center" }} className="mt-2">
             <h1>Leaderboard</h1>
             <Row>
                 <Leaderboard />
