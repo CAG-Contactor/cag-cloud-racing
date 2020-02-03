@@ -30,6 +30,7 @@ const SignUp = () => {
                     signInUser(data)
                 }
             }).catch((e: any) => {
+                setLoading(false);
                 if (e.response.status === 409) {
                     setErrorMsg("Account with that username already exists")
                 } else {
@@ -89,7 +90,7 @@ const SignUp = () => {
                                 />
                             </InputGroup>
 
-                            {loading && <p className="loading-indicator">Signing in...</p>}
+                            {loading && <p style={{ color: '#4cff2c' }} className="loading-indicator">Signing in...</p>}
                             {!loading &&
                                 <button className="btn btn-lg btn-primary btn-block mb-3" type="submit">
                                     Sign up
