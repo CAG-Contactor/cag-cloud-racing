@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Col, Container } from 'react-bootstrap'
+import { Container } from 'react-bootstrap'
 import API from "../../BackendAPI"
 import { useSelector } from 'react-redux';
 import { Button, Alert } from 'react-bootstrap';
@@ -51,9 +51,9 @@ const Queue = () => {
       getRaceQueue()
     }).catch((error) => {
       if (error.response && error.response.status === 400) {
-        setErrorMsg("You are already in the Race Queue!")
+        setErrorMsg("You are already in the race queue!")
       }
-    })
+    }).finally(() => setLoading(false))
   }
 
   const bailOutFromQueue = () => {
@@ -62,9 +62,9 @@ const Queue = () => {
       getRaceQueue()
     }).catch((error) => {
       if (error.response && error.response.status === 404) {
-        setErrorMsg("You are not in the Race Queue")
+        setErrorMsg("You are not in the race queue")
       }
-    })
+    }).finally(() => setLoading(false))
   }
 
   function SignUpForRace() {
