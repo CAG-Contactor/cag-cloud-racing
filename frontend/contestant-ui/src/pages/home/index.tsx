@@ -4,7 +4,7 @@ import { Container } from 'react-bootstrap'
 const Home = () => {
     return (
         <Container style={{ textAlign: "center" }} className="mt-2">
-            <h1>C.A.G Maze Runner</h1>
+            <h1>C.A.G RACE</h1>
             <div style={{ color: '#4cff2c', paddingLeft: '.5rem', paddingRight: '.5rem' }} className="text-justify">
                 <p>
                     In this game you will try to get through a labyrinth as fast as possible, by steering a ball via an app.
